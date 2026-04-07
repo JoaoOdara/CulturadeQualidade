@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odara — Painel Cultural · Segurança do Produto & Qualidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-size:16px;}
+:root{
+  --y:#FFB81D; --yl:rgba(255,184,29,0.15); --yd:rgba(255,184,29,0.35);
+  --r:#EE2737; --p:#0C0C0C; --g:#565555; --c:#FFF8EA;
+  --card-border:1.5px solid rgba(12,12,12,0.12);
+  --card-shadow:0 2px 12px rgba(12,12,12,0.06);
+  --font:'Barlow',sans-serif; --fontc:'Barlow Condensed',sans-serif;
+}
+
+body{font-family:var(--font);background:#F0EDE5;color:var(--p);display:flex;}
+
+/* ===== SIDEBAR ===== */
+.sidebar{width:220px;flex-shrink:0;background:var(--p);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,184,29,0.12);}
+.sb-logo{font-family:var(--font);font-size:18px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;display:block;margin-bottom:3px;}
+.sb-logo span{color:var(--y);}
+.sb-subtitle{font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,184,29,0.4);line-height:1.5;}
+.sb-nav{flex:1;padding:10px 0;}
+.nav-item{display:flex;align-items:center;gap:9px;width:100%;padding:10px 18px;background:none;border:none;color:rgba(255,255,255,0.4);font-family:var(--font);font-size:12px;font-weight:500;text-align:left;cursor:pointer;transition:all 0.18s;position:relative;}
+.nav-item:hover{color:var(--y);background:rgba(255,184,29,0.06);}
+.nav-item.active{color:var(--y);background:rgba(255,184,29,0.1);font-weight:700;}
+.nav-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--y);border-radius:0 2px 2px 0;}
+.nav-icon{font-size:13px;}
+.nav-badge{margin-left:auto;background:var(--r);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;min-width:16px;text-align:center;}
+.sb-footer{padding:14px 18px;border-top:1px solid rgba(255,184,29,0.08);display:flex;flex-direction:column;gap:8px;}
+.sb-link{color:rgba(255,255,255,0.3);font-size:11px;text-decoration:none;transition:color 0.2s;font-weight:500;}
+.sb-link:hover{color:var(--y);}
+.btn-export{background:rgba(255,184,29,0.1);border:1.5px solid rgba(255,184,29,0.25);color:var(--y);font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:9px 12px;border-radius:2px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.btn-export:hover{background:rgba(255,184,29,0.2);}
+
+/* ===== MAIN ===== */
+.main{flex:1;overflow-y:auto;overflow-x:hidden;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:#fff;border-bottom:2px solid rgba(12,12,12,0.08);position:sticky;top:0;z-index:50;}
+.topbar-title{font-family:var(--fontc);font-size:20px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:0.5px;}
+.topbar-sub{font-size:10px;color:var(--g);margin-top:2px;}
+
+.tab-content{display:none;padding:22px 28px 60px;}
+.tab-content.active{display:block;}
+
+/* ===== KPI ROW ===== */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{background:#fff;border:var(--card-border);border-radius:6px;padding:18px 16px;text-align:center;box-shadow:var(--card-shadow);transition:border-color 0.2s;}
+.kpi-card:hover{border-color:var(--yd);}
+.kpi-card.kpi-accent{background:var(--p);border-color:rgba(255,184,29,0.4);}
+.kpi-card.kpi-accent .kpi-val{color:var(--y);}
+.kpi-card.kpi-accent .kpi-lbl{color:rgba(255,255,255,0.35);}
+.kpi-icon{font-size:20px;margin-bottom:8px;}
+.kpi-val{font-family:var(--fontc);font-size:36px;font-weight:700;color:var(--p);line-height:1;margin-bottom:3px;letter-spacing:-1px;}
+.kpi-val.kpi-red{color:var(--r);}
+.kpi-lbl{font-size:11px;color:var(--g);}
+.kpi-mat{display:inline-block;margin-top:7px;background:rgba(255,184,29,0.15);color:#A07010;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:2px;}
+
+/* ===== CHART CARDS ===== */
+.chart-card{background:#fff;border:var(--card-border);border-radius:6px;padding:20px;margin-bottom:16px;box-shadow:var(--card-shadow);}
+.chart-hdr{margin-bottom:16px;}
+.chart-title{font-family:var(--fontc);font-size:14px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:0.5px;}
+.chart-sub{font-size:11px;color:var(--g);margin-top:2px;}
+
+/* RADAR — destaque maior */
+.radar-card{background:#fff;border:2px solid var(--yd);border-radius:6px;padding:24px;margin-bottom:16px;box-shadow:0 4px 20px rgba(255,184,29,0.1);}
+.radar-box{max-width:560px;margin:0 auto;height:360px;}
+
+/* Distribuição ao lado */
+.charts-row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.chart-box{position:relative;height:260px;}
+.chart-box-md{position:relative;height:320px;}
+.chart-box-lg{position:relative;height:400px;}
+
+/* ===== SEGMENTADOS ===== */
+.seg-title{font-family:var(--fontc);font-size:13px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-top:4px;}
+.seg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.seg-card{background:#fff;border:var(--card-border);border-radius:6px;padding:16px 18px;box-shadow:var(--card-shadow);}
+.seg-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.seg-label{font-size:13px;font-weight:700;margin-bottom:2px;}
+.seg-n{font-size:10px;color:var(--g);}
+.seg-score-block{text-align:right;}
+.seg-score{font-family:var(--fontc);font-size:28px;font-weight:700;line-height:1;margin-bottom:4px;}
+.seg-bars{display:flex;flex-direction:column;gap:7px;}
+.seg-bar-row{display:flex;align-items:center;gap:8px;}
+.seg-bar-label{font-size:10px;font-weight:600;color:var(--g);width:68px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.3px;}
+.seg-bar-track{flex:1;height:6px;background:rgba(12,12,12,0.07);border-radius:3px;overflow:hidden;}
+.seg-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+.seg-bar-val{font-size:11px;font-weight:700;width:28px;text-align:right;}
+
+/* ===== INSIGHTS ===== */
+.sec-label{font-family:var(--fontc);font-size:13px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+.insight-card{border-radius:4px;padding:13px 15px;border-left:3px solid;font-size:12px;line-height:1.6;box-shadow:0 1px 6px rgba(12,12,12,0.04);}
+.insight-card.critical{background:rgba(238,39,55,0.05);border-color:var(--r);}
+.insight-card.warning{background:rgba(255,184,29,0.06);border-color:var(--y);}
+.insight-card.positive{background:rgba(39,174,96,0.05);border-color:#27AE60;}
+.insight-title{font-weight:700;color:var(--p);margin-bottom:4px;font-size:12px;}
+
+/* ===== TABELA ===== */
+.table-card{background:#fff;border:var(--card-border);border-radius:6px;overflow:hidden;box-shadow:var(--card-shadow);}
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table th{background:#EDE9DF;padding:10px 14px;text-align:left;font-size:9px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:0.8px;}
+.data-table td{padding:10px 14px;border-top:1px solid rgba(12,12,12,0.06);vertical-align:middle;}
+.score-pill{display:inline-block;padding:3px 10px;border-radius:2px;font-size:10px;font-weight:700;}
+.score-pill.critical{background:rgba(238,39,55,0.1);color:var(--r);}
+.score-pill.fragile{background:rgba(230,126,34,0.1);color:#E67E22;}
+.score-pill.dev{background:rgba(255,184,29,0.12);color:#A07010;}
+.score-pill.ok{background:rgba(39,174,96,0.1);color:#27AE60;}
+
+/* ===== HEATMAP ===== */
+.hm-filters{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#fff;border:var(--card-border);border-radius:6px;box-shadow:var(--card-shadow);}
+.hm-filter-group{display:flex;align-items:center;gap:6px;}
+.hm-filter-label{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;}
+.hm-filter-sel{padding:7px 12px;border:1.5px solid rgba(12,12,12,0.12);border-radius:3px;background:var(--c);font-family:var(--font);font-size:12px;font-weight:500;color:var(--p);cursor:pointer;}
+.hm-filter-sel:focus{outline:none;border-color:var(--y);}
+.hm-reset-btn{background:rgba(238,39,55,0.08);border:1.5px solid rgba(238,39,55,0.2);color:var(--r);font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:7px 14px;border-radius:3px;cursor:pointer;margin-left:auto;white-space:nowrap;}
+.hm-reset-btn:hover{background:rgba(238,39,55,0.15);}
+
+#heatmap-container{overflow-x:auto;display:flex;justify-content:center;padding:8px 0;}
+.heatmap-table{border-collapse:separate;border-spacing:4px;font-size:11px;}
+.hm-dim-header{text-align:left;padding:6px 12px;color:var(--g);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;}
+.hm-dim-name{padding:0 12px;font-weight:600;color:var(--p);font-size:12px;white-space:nowrap;}
+.hm-cell{width:90px;height:58px;text-align:center;border-radius:4px;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;border:2px solid transparent;user-select:none;}
+.hm-cell:hover{transform:scale(1.06);box-shadow:0 4px 16px rgba(12,12,12,0.2);z-index:1;position:relative;}
+.hm-cell.hm-selected{border-color:var(--p)!important;box-shadow:0 0 0 3px rgba(12,12,12,0.2);transform:scale(1.04);}
+.hm-sub{display:block;font-size:9px;font-weight:400;opacity:0.75;margin-top:2px;}
+
+/* DRILL-DOWN */
+.drilldown-hint{text-align:center;color:var(--g);font-size:13px;padding:40px 20px;background:#fff;border:var(--card-border);border-radius:6px;border-style:dashed;margin-top:16px;}
+.drilldown-card{background:#fff;border:2px solid var(--yd);border-radius:6px;margin-top:16px;overflow:hidden;box-shadow:0 4px 24px rgba(255,184,29,0.1);}
+.drilldown-header{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 24px;background:linear-gradient(135deg,#FAF5E0,#fff);border-bottom:1.5px solid rgba(12,12,12,0.08);}
+.drilldown-breadcrumb{font-size:11px;font-weight:600;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.drilldown-score-line{display:flex;align-items:center;gap:10px;}
+.drilldown-score-big{font-family:var(--fontc);font-size:42px;font-weight:700;line-height:1;}
+.drilldown-score-big.critical{color:var(--r);}
+.drilldown-score-big.fragile{color:#E67E22;}
+.drilldown-score-big.dev{color:#A07010;}
+.drilldown-score-big.ok{color:#27AE60;}
+.drilldown-close{background:rgba(12,12,12,0.06);border:1px solid rgba(12,12,12,0.12);color:var(--g);font-family:var(--font);font-size:11px;font-weight:600;padding:7px 14px;border-radius:3px;cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.drilldown-close:hover{background:rgba(238,39,55,0.08);color:var(--r);border-color:rgba(238,39,55,0.3);}
+.drilldown-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.drilldown-section{padding:20px 24px;border-right:1px solid rgba(12,12,12,0.07);}
+.drilldown-section:last-child{border-right:none;}
+.drilldown-sec-title{font-family:var(--fontc);font-size:12px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;}
+.drilldown-questions{display:flex;flex-direction:column;gap:10px;}
+.dq-row{display:flex;align-items:center;gap:10px;}
+.dq-id{font-size:9px;font-weight:700;color:var(--g);width:34px;flex-shrink:0;text-transform:uppercase;}
+.dq-text{font-size:11px;color:var(--p);line-height:1.4;flex:1;}
+.dq-bar-wrap{display:flex;align-items:center;gap:6px;width:100px;flex-shrink:0;}
+.dq-bar-track{flex:1;height:5px;background:rgba(12,12,12,0.08);border-radius:3px;overflow:hidden;}
+.dq-bar-fill{height:100%;border-radius:3px;transition:width 0.5s;}
+.dq-score{font-size:11px;font-weight:700;width:24px;text-align:right;}
+.drilldown-actions-list{display:flex;flex-direction:column;gap:10px;}
+.da-card{border-radius:4px;padding:12px 14px;border-left:3px solid;}
+.da-card.da-critical{background:rgba(238,39,55,0.05);border-color:var(--r);}
+.da-card.da-warning{background:rgba(255,184,29,0.07);border-color:var(--y);}
+.da-card.da-info{background:rgba(52,152,219,0.05);border-color:#3498DB;}
+.da-title{font-weight:700;font-size:12px;color:var(--p);margin-bottom:4px;}
+.da-body{font-size:11px;color:var(--g);line-height:1.5;margin-bottom:8px;}
+.da-add-btn{background:var(--p);color:var(--y);border:none;font-family:var(--font);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:2px;cursor:pointer;transition:all 0.2s;}
+.da-add-btn:hover{background:#222;}
+
+/* ===== VERBATIM ===== */
+.verbatim-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.verbatim-btn{padding:7px 16px;border:1.5px solid rgba(12,12,12,0.12);border-radius:2px;background:#fff;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;color:var(--g);box-shadow:0 1px 4px rgba(12,12,12,0.04);}
+.verbatim-btn.active{background:var(--p);color:var(--y);border-color:var(--p);}
+.verbatim-card{background:#fff;border:var(--card-border);border-radius:4px;padding:14px 18px;margin-bottom:10px;border-left:3px solid var(--y);box-shadow:var(--card-shadow);}
+.verbatim-meta{font-size:10px;color:var(--g);margin-bottom:7px;display:flex;gap:12px;}
+.verbatim-text{font-size:13px;color:var(--p);line-height:1.7;font-style:italic;}
+
+/* ===== ACTIONS ===== */
+.actions-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.btn-add-action{background:var(--p);color:var(--y);border:none;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:11px 20px;border-radius:2px;cursor:pointer;transition:all 0.2s;}
+.btn-add-action:hover{background:#222;}
+.action-form-card{background:#fff;border:2px solid var(--y);border-radius:6px;padding:22px;margin-bottom:18px;box-shadow:0 4px 16px rgba(255,184,29,0.08);}
+.form-title{font-family:var(--fontc);font-size:15px;font-weight:700;text-transform:uppercase;color:var(--p);letter-spacing:0.5px;margin-bottom:14px;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px;}
+.form-group{display:flex;flex-direction:column;gap:3px;}
+.form-group.full{margin-bottom:10px;}
+.form-group label{font-size:9px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:1px;}
+.form-input{padding:9px 11px;border:1.5px solid rgba(12,12,12,0.12);border-radius:3px;font-family:var(--font);font-size:12px;font-weight:500;color:var(--p);background:var(--c);}
+.form-input:focus{outline:none;border-color:var(--y);}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;}
+.btn-cancel-form{padding:9px 18px;border:1.5px solid rgba(12,12,12,0.12);border-radius:2px;background:none;font-family:var(--font);font-size:10px;font-weight:600;cursor:pointer;color:var(--g);text-transform:uppercase;letter-spacing:1px;}
+.btn-save-form{padding:9px 22px;background:var(--y);color:var(--p);border:none;border-radius:2px;font-family:var(--font);font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:1px;}
+.btn-save-form:hover{background:#FFC94D;}
+
+.action-card{background:#fff;border:var(--card-border);border-radius:6px;padding:16px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;box-shadow:var(--card-shadow);transition:border-color 0.2s;}
+.action-card:hover{border-color:var(--yd);}
+.action-status-btn{flex-shrink:0;width:28px;height:28px;border-radius:50%;border:2px solid rgba(12,12,12,0.15);background:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.action-status-btn.progress{border-color:var(--y);background:rgba(255,184,29,0.1);}
+.action-status-btn.done{border-color:#27AE60;background:rgba(39,174,96,0.1);}
+.action-body{flex:1;min-width:0;}
+.action-title{font-weight:700;color:var(--p);font-size:13px;margin-bottom:3px;}
+.action-meta{font-size:11px;color:var(--g);margin-bottom:5px;}
+.action-desc{font-size:12px;color:var(--g);margin-bottom:8px;line-height:1.5;}
+.action-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.action-tag{font-size:9px;padding:2px 7px;border-radius:2px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.tag-high{background:rgba(255,184,29,0.12);color:#A07010;}
+.tag-critical{background:rgba(238,39,55,0.1);color:var(--r);}
+.tag-medium{background:rgba(52,152,219,0.1);color:#2980B9;}
+.tag-low{background:rgba(149,165,166,0.15);color:#7F8C8D;}
+.tag-dim{background:rgba(12,12,12,0.07);color:var(--g);}
+.tag-done{background:rgba(39,174,96,0.1);color:#27AE60;}
+.action-progress-bar{height:2px;background:rgba(12,12,12,0.08);border-radius:2px;overflow:hidden;}
+.action-progress-fill{height:100%;background:var(--y);border-radius:2px;transition:width 0.4s;}
+.action-actions{flex-shrink:0;display:flex;flex-direction:column;gap:5px;}
+.btn-edit-action,.btn-del-action{width:28px;height:28px;border-radius:3px;border:none;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;transition:all 0.18s;}
+.btn-edit-action{background:rgba(12,12,12,0.05);color:var(--g);}
+.btn-edit-action:hover{background:rgba(255,184,29,0.15);color:#A07010;}
+.btn-del-action{background:rgba(238,39,55,0.05);color:rgba(238,39,55,0.4);}
+.btn-del-action:hover{background:rgba(238,39,55,0.15);color:var(--r);}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(12,12,12,0.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-box{background:#fff;border-radius:6px;border:2px solid var(--y);padding:26px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(12,12,12,0.2);}
+.modal-title{font-family:var(--fontc);font-size:15px;font-weight:700;text-transform:uppercase;color:var(--p);margin-bottom:18px;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <span class="sb-logo">ODARA<span>.</span></span>
+    <span class="sb-subtitle">Painel Cultural de<br>Segurança do Produto<br>& Qualidade</span>
+  </div>
+  <nav class="sb-nav">
+    <button class="nav-item active" onclick="showTab('overview')"   id="tab-overview">  <span class="nav-icon">🏠</span> Visão Geral</button>
+    <button class="nav-item"        onclick="showTab('dimensions')" id="tab-dimensions"><span class="nav-icon">📊</span> Dimensões</button>
+    <button class="nav-item"        onclick="showTab('heatmap')"    id="tab-heatmap">   <span class="nav-icon">🌡️</span> Heatmap</button>
+    <button class="nav-item"        onclick="showTab('verbatim')"   id="tab-verbatim">  <span class="nav-icon">💬</span> Respostas Abertas</button>
+    <button class="nav-item"        onclick="showTab('actions')"    id="tab-actions">   <span class="nav-icon">⚡</span> Plano de Ação<span class="nav-badge" id="actions-badge">3</span></button>
+  </nav>
+  <div class="sb-footer">
+    <a href="index.html" class="sb-link">← Formulário de pesquisa</a>
+    <button class="btn-export" onclick="exportCSV()">⬇ Exportar CSV</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="tab-title">Visão Geral</div>
+      <div class="topbar-sub">Painel Cultural de Segurança do Produto & Qualidade · FSSC 22000 v6 · <span id="topbar-date"></span></div>
+    </div>
+  </div>
+
+  <!-- TAB: VISÃO GERAL -->
+  <div class="tab-content active" id="content-overview">
+
+    <div class="kpi-row">
+      <div class="kpi-card"><div class="kpi-icon">📋</div><div class="kpi-val" id="kpi-respondents">127</div><div class="kpi-lbl">Respondentes</div></div>
+      <div class="kpi-card kpi-accent"><div class="kpi-icon">⭐</div><div class="kpi-val" id="kpi-score">3.82</div><div class="kpi-lbl">Score Geral (1–5)</div><div class="kpi-mat" id="kpi-maturity">Em Desenvolvimento</div></div>
+      <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-val" id="kpi-completion">87%</div><div class="kpi-lbl">Taxa de Conclusão</div></div>
+      <div class="kpi-card"><div class="kpi-icon">⚠️</div><div class="kpi-val kpi-red" id="kpi-critical">2</div><div class="kpi-lbl">Dimensões críticas (&lt;3.5)</div></div>
+    </div>
+
+    <!-- Radar em destaque + Distribuição lado a lado -->
+    <div class="charts-row-2">
+      <div class="radar-card" style="grid-column:1/2;">
+        <div class="chart-hdr">
+          <div class="chart-title">Radar Cultural por Dimensão</div>
+          <div class="chart-sub">Score médio 1–5 · Geral (todos os públicos) vs Lideranças</div>
+        </div>
+        <div class="radar-box"><canvas id="radarChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-hdr">
+          <div class="chart-title">Distribuição de Respostas</div>
+          <div class="chart-sub">Percentual por valor da escala Likert</div>
+        </div>
+        <div class="chart-box"><canvas id="distributionChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="sec-label">💡 Insights Automáticos</div>
+    <div class="insights-grid" id="insights-grid" style="margin-bottom:20px;"></div>
+
+    <!-- Visões segmentadas por público -->
+    <div class="sec-label">📊 Score por Público — Visão Segmentada</div>
+    <div class="seg-grid" id="segmented-scores"></div>
+
+  </div>
+
+  <!-- TAB: DIMENSÕES -->
+  <div class="tab-content" id="content-dimensions">
+    <div class="chart-card">
+      <div class="chart-hdr">
+        <div class="chart-title">Score por Dimensão — Colaboradores vs Lideranças</div>
+        <div class="chart-sub">Linha de limiar em 3.5 (zona de intervenção abaixo)</div>
+      </div>
+      <div class="chart-box-md"><canvas id="dimensionsChart"></canvas></div>
+    </div>
+    <div style="height:14px;"></div>
+    <div class="table-card">
+      <table class="data-table">
+        <thead><tr><th>Dimensão</th><th>Público</th><th>Score</th><th>Maturidade</th><th>Ação Recomendada</th></tr></thead>
+        <tbody id="dim-table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: HEATMAP -->
+  <div class="tab-content" id="content-heatmap">
+
+    <div class="hm-filters" id="heatmap-filters"></div>
+
+    <div class="chart-card" style="padding:20px;">
+      <div class="chart-hdr">
+        <div class="chart-title">Heatmap de Gaps — Dimensões × Áreas</div>
+        <div class="chart-sub">🔴 Em Risco (&lt;3.0) · 🟠 Frágil (&lt;3.5) · 🟡 Desenvolvimento (&lt;4.0) · 🟢 Consolidado · Clique para detalhes</div>
+      </div>
+      <div id="heatmap-container"></div>
+    </div>
+
+    <!-- Ranking por pergunta -->
+    <div class="chart-card">
+      <div class="chart-hdr">
+        <div class="chart-title">Ranking por Pergunta</div>
+        <div class="chart-sub">Perguntas ordenadas do menor para o maior score · 🔴 &lt;3.5 · 🟡 &lt;4.0 · 🟢 ≥4.0</div>
+      </div>
+      <div class="chart-box-lg"><canvas id="questionsChart"></canvas></div>
+    </div>
+
+    <!-- Drill-down -->
+    <div id="heatmap-drilldown"></div>
+
+  </div>
+
+  <!-- TAB: RESPOSTAS ABERTAS -->
+  <div class="tab-content" id="content-verbatim">
+    <div class="verbatim-filters">
+      <button class="verbatim-btn active" onclick="filterVerbatim('all',this)">Todos</button>
+      <button class="verbatim-btn" onclick="filterVerbatim('strengths',this)">💪 Pontos Fortes</button>
+      <button class="verbatim-btn" onclick="filterVerbatim('weaknesses',this)">⚠️ Pontos Fracos</button>
+      <button class="verbatim-btn" onclick="filterVerbatim('actions',this)">⚡ Sugestões de Ação</button>
+    </div>
+    <div id="verbatim-list"></div>
+  </div>
+
+  <!-- TAB: PLANO DE AÇÃO -->
+  <div class="tab-content" id="content-actions">
+    <div class="actions-hdr">
+      <div class="sec-label" style="margin:0;">Plano de Ação · Ciclo ACT</div>
+      <button class="btn-add-action" onclick="openNewAction()">+ Nova Ação</button>
+    </div>
+
+    <div class="action-form-card" id="action-form" style="display:none;">
+      <div class="form-title">Nova Ação</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Dimensão</label>
+          <select class="form-input" id="new-dimension">
+            <option>Liderança e prioridade</option><option>Comunicação e clareza</option>
+            <option>Competência e treinamento</option><option>Disciplina operacional</option>
+            <option>Higiene e comportamento</option><option>Reporte e aprendizagem</option>
+            <option>Cultura do time</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Responsável</label><input class="form-input" type="text" id="new-owner" placeholder="Nome ou cargo"></div>
+        <div class="form-group"><label>Prazo</label><input class="form-input" type="date" id="new-deadline"></div>
+        <div class="form-group">
+          <label>Prioridade</label>
+          <select class="form-input" id="new-priority"><option>Alta</option><option>Média</option><option>Baixa</option></select>
+        </div>
+      </div>
+      <div class="form-group full"><label>Descrição da Ação</label><textarea class="form-input" id="new-action-desc" rows="3" style="resize:vertical;min-height:70px;" placeholder="Descreva a ação concreta..."></textarea></div>
+      <div class="form-group full"><label>Resultado Esperado</label><input class="form-input" type="text" id="new-expected" placeholder="Como saberemos que deu certo?"></div>
+      <div class="form-actions">
+        <button class="btn-cancel-form" onclick="closeNewAction()">Cancelar</button>
+        <button class="btn-save-form" onclick="saveNewAction()">Salvar Ação</button>
+      </div>
+    </div>
+
+    <div id="actions-list"></div>
+  </div>
+
+</main>
+
+<!-- MODAL EDIÇÃO -->
+<div class="modal-overlay" id="edit-modal" style="display:none;" onclick="closeEditModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">Editar Ação</div>
+    <input type="hidden" id="edit-id">
+    <div class="form-grid">
+      <div class="form-group"><label>Dimensão</label>
+        <select class="form-input" id="edit-dimension">
+          <option>Liderança e prioridade</option><option>Comunicação e clareza</option>
+          <option>Competência e treinamento</option><option>Disciplina operacional</option>
+          <option>Higiene e comportamento</option><option>Reporte e aprendizagem</option>
+          <option>Cultura do time</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Responsável</label><input class="form-input" type="text" id="edit-owner"></div>
+      <div class="form-group"><label>Prazo</label><input class="form-input" type="date" id="edit-deadline"></div>
+      <div class="form-group"><label>Prioridade</label>
+        <select class="form-input" id="edit-priority"><option>Alta</option><option>Média</option><option>Baixa</option></select>
+      </div>
+      <div class="form-group"><label>Status</label>
+        <select class="form-input" id="edit-status"><option value="open">Aberto</option><option value="progress">Em andamento</option><option value="done">Concluído</option></select>
+      </div>
+    </div>
+    <div class="form-group full"><label>Descrição</label><textarea class="form-input" id="edit-desc" rows="3" style="resize:vertical;min-height:70px;"></textarea></div>
+    <div class="form-group full"><label>Resultado Esperado</label><input class="form-input" type="text" id="edit-expected"></div>
+    <div class="form-actions">
+      <button class="btn-cancel-form" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-save-form" onclick="saveEdit()">Salvar Alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- Dimensions bar chart (hidden canvas, initialized on tab open) -->
+<canvas id="dimensionsChart" style="display:none;"></canvas>
+<canvas id="questionsChart" style="display:none;"></canvas>
+
+<script>
+// Initialize bar charts lazily when tab is clicked
+let dimChartInit=false, qChartInit=false;
+const origShowTab = window.showTab;
+document.addEventListener('DOMContentLoaded',()=>{
+  // Override showTab after dashboard.js runs
+  setTimeout(()=>{
+    const orig = window.showTab;
+    window.showTab = function(id) {
+      orig(id);
+      if(id==='dimensions'&&!dimChartInit){dimChartInit=true;initDimChart();}
+      if(id==='heatmap'&&!qChartInit){qChartInit=true;initQChart();}
+    };
+  },100);
+});
+
+function initDimChart(){
+  const canvas=document.getElementById('dimensionsChart');
+  canvas.style.display='';
+  const C={y:'#FFB81D',p:'#0C0C0C',g:'#565555'};
+  const dims=Object.keys(MOCK.dimensionScores);
+  new Chart(canvas,{
+    type:'bar',
+    data:{labels:dims,datasets:[
+      {label:'Colaboradores',data:dims.map(d=>MOCK.dimensionScores[d].internos),backgroundColor:C.y+'BB',borderRadius:3,borderColor:C.y,borderWidth:1.5},
+      {label:'Lideranças',   data:dims.map(d=>MOCK.dimensionScores[d].liderancas),backgroundColor:C.p+'99',borderRadius:3,borderColor:C.p,borderWidth:1.5},
+    ]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{font:{size:11,family:'Barlow'},padding:14,color:C.p,usePointStyle:true}}},
+      scales:{
+        y:{min:1,max:5,grid:{color:'rgba(255,184,29,0.1)'},ticks:{font:{size:11},color:C.g}},
+        x:{grid:{display:false},ticks:{font:{size:10},color:C.p,maxRotation:25}}
+      }
+    }
+  });
+}
+
+function initQChart(){
+  const canvas=document.getElementById('questionsChart');
+  canvas.style.display='';
+  const sorted=[...MOCK.questionScores].sort((a,b)=>a.score-b.score);
+  const colors=sorted.map(q=>q.score<3.5?'#C0392BAA':q.score<4.0?'#FFB81DAA':'#27AE60AA');
+  new Chart(canvas,{
+    type:'bar',
+    data:{labels:sorted.map(q=>q.id+': '+q.text.substring(0,40)+'...'),
+      datasets:[{data:sorted.map(q=>q.score),backgroundColor:colors,borderColor:colors.map(c=>c.replace('AA','FF')),borderWidth:1,borderRadius:3,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{min:1,max:5,grid:{color:'rgba(255,184,29,0.08)'},ticks:{font:{size:11},color:'#565555'}},
+        y:{grid:{display:false},ticks:{font:{size:10},color:'#0C0C0C'}}
+      }
+    }
+  });
+}
+</script>
+
+<script src="survey-data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

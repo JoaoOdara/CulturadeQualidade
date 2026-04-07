@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odara — Pesquisa de Cultura da Qualidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;font-family:'Barlow',sans-serif;}
+
+body{
+  background:#0C0C0C;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+}
+
+/* BG decorativo */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg::before{
+  content:'';position:absolute;top:-15%;right:-5%;
+  width:50%;height:130%;
+  background:linear-gradient(135deg,#FFB81D,#E8A010);
+  clip-path:polygon(22% 0%,100% 0%,100% 100%,0% 100%);
+  opacity:.055;
+}
+.bg::after{
+  content:'';position:absolute;bottom:-80px;left:-80px;
+  width:380px;height:380px;border-radius:50%;
+  border:1px solid rgba(255,184,29,.07);
+  box-shadow:0 0 0 60px rgba(255,184,29,.025),0 0 0 120px rgba(255,184,29,.015);
+}
+
+/* WRAP */
+.wrap{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;}
+
+/* HEADER */
+header{
+  flex-shrink:0;
+  padding:14px 36px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,184,29,.1);
+}
+.logo{font-family:'Barlow',sans-serif;font-size:20px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;}
+.logo span{color:#FFB81D;}
+.header-center{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#565555;text-align:center;}
+.btn-painel{
+  font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:#FFB81D;background:none;
+  border:1.5px solid rgba(255,184,29,.35);
+  padding:8px 16px;border-radius:2px;cursor:pointer;
+  transition:all .2s;
+}
+.btn-painel:hover{background:rgba(255,184,29,.1);border-color:#FFB81D;}
+
+/* HERO */
+.hero{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:0;
+}
+
+/* LADO ESQUERDO */
+.left{
+  padding:24px 36px;
+  display:flex;flex-direction:column;justify-content:center;
+  gap:14px;
+}
+
+.badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(238,39,55,.15);border:1px solid rgba(238,39,55,.3);
+  color:#EE2737;font-size:9px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;padding:4px 10px;border-radius:2px;
+  width:fit-content;
+}
+.badge::before{
+  content:'';width:5px;height:5px;border-radius:50%;background:#EE2737;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.title{
+  font-family:'Barlow',sans-serif;font-weight:900;text-transform:uppercase;
+  letter-spacing:-1px;line-height:1.05;
+}
+.title-line1{font-size:clamp(20px,2.4vw,32px);color:#fff;}
+.title-accent{display:block;font-size:clamp(24px,2.8vw,38px);color:#FFB81D;}
+.title-sub{display:block;font-size:clamp(11px,1.2vw,15px);font-weight:300;color:rgba(255,255,255,.45);text-transform:none;letter-spacing:0;margin-top:2px;}
+
+.desc{font-size:11px;color:#565555;line-height:1.65;max-width:420px;}
+
+/* PRAZOS */
+.prazos{
+  background:rgba(255,184,29,.05);
+  border:1px solid rgba(255,184,29,.15);
+  border-left:3px solid #FFB81D;
+  border-radius:2px;padding:12px 16px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.prazos-label{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#FFB81D;margin-bottom:2px;}
+.prazo{display:flex;align-items:center;gap:10px;}
+.prazo-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
+.prazo-dot.active{background:rgba(238,39,55,.2);}
+.prazo-dot.next{background:rgba(255,184,29,.15);}
+.prazo-dot.future{background:rgba(86,85,85,.2);}
+.prazo-name{font-size:11px;font-weight:600;color:#fff;line-height:1.2;}
+.prazo-date{font-size:9px;color:#565555;}
+.prazo.active .prazo-name{color:#EE2737;}
+
+/* LADO DIREITO */
+.right{
+  border-left:1px solid rgba(255,184,29,.1);
+  background:rgba(255,248,234,.025);
+  padding:24px 36px;
+  display:flex;flex-direction:column;justify-content:center;
+  gap:0;
+}
+.pick-label{font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#565555;margin-bottom:14px;}
+
+.audience-grid{display:flex;flex-direction:column;gap:9px;}
+
+.aud-card{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:3px;
+  cursor:pointer;text-decoration:none;color:inherit;
+  transition:all .22s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+}
+.aud-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:#FFB81D;transform:scaleY(0);transition:transform .22s ease;
+  border-radius:0 2px 2px 0;
+}
+.aud-card:hover{background:rgba(255,184,29,.06);border-color:rgba(255,184,29,.28);transform:translateX(3px);}
+.aud-card:hover::before{transform:scaleY(1);}
+
+.aud-icon{width:34px;height:34px;background:rgba(255,184,29,.1);border:1px solid rgba(255,184,29,.2);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:background .2s;}
+.aud-card:hover .aud-icon{background:rgba(255,184,29,.2);}
+.aud-body{flex:1;}
+.aud-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:1px;}
+.aud-meta{font-size:10px;color:#565555;}
+.aud-time{font-size:8px;font-weight:700;letter-spacing:1px;color:#FFB81D;background:rgba(255,184,29,.1);padding:2px 7px;border-radius:2px;white-space:nowrap;}
+.aud-arrow{font-size:13px;color:#FFB81D;opacity:0;transform:translateX(-5px);transition:all .2s;}
+.aud-card:hover .aud-arrow{opacity:1;transform:translateX(0);}
+
+.anon{margin-top:12px;font-size:9px;color:#565555;display:flex;align-items:center;gap:6px;}
+.anon::before{content:'🔒';font-size:11px;}
+
+/* FOOTER */
+footer{
+  flex-shrink:0;padding:9px 36px;
+  border-top:1px solid rgba(255,184,29,.07);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.footer-copy{font-size:9px;color:#333;letter-spacing:.3px;}
+.footer-badges{display:flex;gap:6px;}
+.fbadge{background:rgba(255,184,29,.1);border:1px solid rgba(255,184,29,.2);color:#FFB81D;padding:3px 8px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:1px;}
+
+/* MODAL SENHA */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(12,12,12,.75);z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-box{
+  background:#1A1A1A;border:2px solid rgba(255,184,29,.4);
+  border-radius:6px;padding:32px 28px;width:100%;max-width:360px;
+  box-shadow:0 16px 48px rgba(0,0,0,.5);
+}
+.modal-logo{font-family:'Barlow',sans-serif;font-size:14px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;margin-bottom:4px;}
+.modal-logo span{color:#FFB81D;}
+.modal-title{font-size:11px;color:#565555;font-weight:400;margin-bottom:24px;letter-spacing:.3px;}
+.modal-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#565555;margin-bottom:6px;display:block;}
+.modal-input{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,.05);
+  border:1.5px solid rgba(255,255,255,.1);
+  border-radius:3px;
+  font-family:'Barlow',sans-serif;font-size:15px;color:#fff;
+  letter-spacing:4px;
+  transition:border-color .2s;
+}
+.modal-input:focus{outline:none;border-color:#FFB81D;}
+.modal-error{font-size:10px;color:#EE2737;margin-top:8px;min-height:15px;display:block;}
+.modal-actions{display:flex;gap:8px;margin-top:20px;}
+.btn-modal-cancel{flex:1;padding:11px;background:none;border:1.5px solid rgba(255,255,255,.1);color:#565555;font-family:'Barlow',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.btn-modal-cancel:hover{border-color:rgba(255,255,255,.25);color:#fff;}
+.btn-modal-ok{flex:2;padding:11px;background:#FFB81D;border:none;color:#0C0C0C;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.btn-modal-ok:hover{background:#FFC94D;}
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">ODARA<span>.</span></div>
+    <div class="header-center">Painel Cultural · Segurança do Produto & Qualidade</div>
+    <button class="btn-painel" onclick="openPasswordModal()">📊 Painel Analítico</button>
+  </header>
+
+  <!-- HERO -->
+  <main class="hero">
+
+    <!-- ESQUERDA -->
+    <div class="left">
+      <div class="badge">Coleta ativa · Rodada 2025-H1</div>
+
+      <div class="title">
+        <div class="title-line1">Pesquisa de</div>
+        <span class="title-accent">Cultura</span>
+        <span class="title-sub">Qualidade & Segurança de Alimentos</span>
+      </div>
+
+      <p class="desc">Esta pesquisa é anônima e faz parte do sistema de gestão de cultura da Odara, alinhado à certificação FSSC 22000 v6. Suas respostas constroem um ambiente mais seguro para toda a cadeia.</p>
+
+      <div class="prazos">
+        <div class="prazos-label">📅 Calendário da pesquisa</div>
+        <div class="prazo active">
+          <div class="prazo-dot active">🔴</div>
+          <div><div class="prazo-name">Coleta de respostas</div><div class="prazo-date">Até 24 de abril de 2025</div></div>
+        </div>
+        <div class="prazo next">
+          <div class="prazo-dot next">🟡</div>
+          <div><div class="prazo-name">Divulgação dos resultados</div><div class="prazo-date">Até 30 de abril de 2025</div></div>
+        </div>
+        <div class="prazo future">
+          <div class="prazo-dot future">⚪</div>
+          <div><div class="prazo-name">Análise e plano de ação</div><div class="prazo-date">Maio a Agosto de 2025</div></div>
+        </div>
+        <div class="prazo future">
+          <div class="prazo-dot future">⚪</div>
+          <div><div class="prazo-name">Nova pesquisa</div><div class="prazo-date">Setembro de 2026</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIREITA -->
+    <div class="right">
+      <div class="pick-label">Selecione seu perfil para iniciar</div>
+
+      <div class="audience-grid">
+        <a class="aud-card" href="survey.html?type=internos">
+          <div class="aud-icon">👷</div>
+          <div class="aud-body">
+            <div class="aud-name">Colaborador</div>
+            <div class="aud-meta">Operacional · Administrativo · Produção</div>
+          </div>
+          <div class="aud-time">~8 min</div>
+          <div class="aud-arrow">→</div>
+        </a>
+        <a class="aud-card" href="survey.html?type=liderancas">
+          <div class="aud-icon">🏆</div>
+          <div class="aud-body">
+            <div class="aud-name">Liderança</div>
+            <div class="aud-meta">Supervisor · Coordenador · Gerente · Diretor</div>
+          </div>
+          <div class="aud-time">~10 min</div>
+          <div class="aud-arrow">→</div>
+        </a>
+        <a class="aud-card" href="survey.html?type=fornecedores">
+          <div class="aud-icon">🤝</div>
+          <div class="aud-body">
+            <div class="aud-name">Fornecedor</div>
+            <div class="aud-meta">Parceiro crítico de cadeia produtiva</div>
+          </div>
+          <div class="aud-time">~6 min</div>
+          <div class="aud-arrow">→</div>
+        </a>
+        <a class="aud-card" href="survey.html?type=distribuidores">
+          <div class="aud-icon">🏪</div>
+          <div class="aud-body">
+            <div class="aud-name">Distribuidor / Cliente</div>
+            <div class="aud-meta">Parceiro comercial e canais de venda</div>
+          </div>
+          <div class="aud-time">~5 min</div>
+          <div class="aud-arrow">→</div>
+        </a>
+      </div>
+
+      <div class="anon">Anonimato garantido · Sem identificação individual · Apenas para melhoria interna</div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-copy">© 2025 Odara Alfajores</div>
+    <div class="footer-badges">
+      <span class="fbadge">FSSC 22000 v6</span>
+      <span class="fbadge">GFSI</span>
+    </div>
+  </footer>
+
+</div>
+
+<!-- MODAL SENHA -->
+<div class="modal-overlay" id="pwd-modal" style="display:none;" onclick="closeIfOutside(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-logo">ODARA<span>.</span></div>
+    <div class="modal-title">Acesso restrito à equipe de gestão</div>
+    <label class="modal-label" for="pwd-input">Senha de acesso</label>
+    <input class="modal-input" id="pwd-input" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPassword()">
+    <span class="modal-error" id="pwd-error"></span>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closePasswordModal()">Cancelar</button>
+      <button class="btn-modal-ok" onclick="checkPassword()">Acessar →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPasswordModal(){
+  document.getElementById('pwd-modal').style.display='flex';
+  document.getElementById('pwd-input').value='';
+  document.getElementById('pwd-error').textContent='';
+  setTimeout(()=>document.getElementById('pwd-input').focus(),100);
+}
+function closePasswordModal(){
+  document.getElementById('pwd-modal').style.display='none';
+}
+function closeIfOutside(e){
+  if(e.target===document.getElementById('pwd-modal')) closePasswordModal();
+}
+function checkPassword(){
+  const v=document.getElementById('pwd-input').value;
+  if(v==='odara'){
+    sessionStorage.setItem('odara_auth','1');
+    window.location.href='dashboard.html';
+  } else {
+    document.getElementById('pwd-error').textContent='Senha incorreta. Tente novamente.';
+    document.getElementById('pwd-input').value='';
+    document.getElementById('pwd-input').focus();
+  }
+}
+</script>
+</body>
+</html>

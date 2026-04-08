@@ -16,8 +16,8 @@ window.ODARA_PASSWORD = 'odara2026';
 // ── Supabase ─────────────────────────────────────────────────
 // 1. Acesse supabase.com → seu projeto → Settings → API
 // 2. Copie "Project URL" e "anon public" key abaixo
-window.SUPABASE_URL      = 'https://SEU_PROJETO.supabase.co';
-window.SUPABASE_ANON_KEY = 'SUA_ANON_KEY_AQUI';
+window.SUPABASE_URL      = 'https://khqbimmcibutfrfmkoxr.supabase.co';
+window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtocWJpbW1jaWJ1dGZyZm1rb3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTY1NjUsImV4cCI6MjA4OTkzMjU2NX0.w3vRAPhiU7Zavgkiv-ldjbHc_UJeGH9ck2tq_YN6MBo';
 
 // ── NÃO EDITAR ABAIXO ────────────────────────────────────────
 

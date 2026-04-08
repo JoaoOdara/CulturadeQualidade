@@ -13,8 +13,8 @@ window.ODARA_PASSWORD = 'odara';
 // ── Supabase ─────────────────────────────────────────────────
 // Cole aqui as credenciais do seu projeto Supabase
 // Settings → API → Project URL e anon/public key
-window.SUPABASE_URL      = 'https://SEU_PROJETO.supabase.co';
-window.SUPABASE_ANON_KEY = 'SUA_ANON_KEY_AQUI';
+window.SUPABASE_URL      = 'khqbimmcibutfrfmkoxr';
+window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtocWJpbW1jaWJ1dGZyZm1rb3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTY1NjUsImV4cCI6MjA4OTkzMjU2NX0.w3vRAPhiU7Zavgkiv-ldjbHc_UJeGH9ck2tq_YN6MBo';
 
 // ── Utilitário: prazo expirado? ──────────────────────────────
 window.isDeadlinePassed = function() {

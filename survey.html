@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Odara — Pesquisa de Cultura</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --amber: #FFB81D;
+  --amber-dark: #E5A210;
+  --red: #EE2737;
+  --cream: #FFF8EA;
+  --cream-dark: #F5EDDA;
+  --black: #0C0C0C;
+  --gray-600: #4A4A4A;
+  --gray-400: #8A8A8A;
+  --gray-200: #D4D4D4;
+  --white: #FFFFFF;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 24px rgba(12,12,12,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--black);
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  background: var(--black);
+  color: var(--cream);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.3rem;
+  color: var(--amber);
+  letter-spacing: 2px;
+}
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.btn-back {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--cream);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-back:hover { border-color: var(--amber); color: var(--amber); }
+.btn-save {
+  background: rgba(255,184,29,0.15);
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.btn-save:hover { background: rgba(255,184,29,0.25); }
+
+/* PROGRESS */
+.progress-bar {
+  background: var(--cream-dark);
+  height: 4px;
+  position: sticky;
+  top: 52px;
+  z-index: 99;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--amber);
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* VIEWS */
+.view { display: none; }
+.view.active { display: block; }
+
+/* CLOSED VIEW */
+.view-closed {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 40px 24px;
+  text-align: center;
+}
+.view-closed.active { display: flex; }
+.closed-icon { font-size: 3rem; margin-bottom: 20px; }
+.closed-title { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 12px; }
+.closed-msg { color: var(--gray-600); max-width: 480px; line-height: 1.6; }
+.closed-date { color: var(--amber-dark); font-weight: 600; margin-top: 8px; }
+.closed-link { margin-top: 24px; }
+.closed-link a {
+  color: var(--amber-dark);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 12px 24px;
+  border: 2px solid var(--amber);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  display: inline-block;
+}
+.closed-link a:hover { background: var(--amber); color: var(--black); }
+
+/* SURVEY CONTAINER */
+.survey-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+.survey-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+.survey-sub {
+  font-size: 0.82rem;
+  color: var(--gray-400);
+  margin-bottom: 24px;
+}
+.survey-intro {
+  background: var(--white);
+  border: 1.5px solid rgba(12,12,12,0.08);
+  border-radius: var(--radius);
+  padding: 20px;
+  font-size: 0.88rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* SECTION HEADER */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.section-num {
+  background: var(--black);
+  color: var(--amber);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.section-info {
+  flex: 1;
+}
+.section-title {
+  font-weight: 700;
+  font-size: 1rem;
+}
+.section-count {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
+/* SEGMENTATION */
+.seg-card {
+  background: var(--white);
+  border: 1.5px solid rgba(12,12,12,0.08);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.seg-label {
+  font-weight: 600;
+  font-size: 0.88rem;
+  margin-bottom: 10px;
+}
+.seg-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seg-opt {
+  padding: 8px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 100px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--white);
+  font-family: inherit;
+}
+.seg-opt:hover { border-color: var(--amber); }
+.seg-opt.selected {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--black);
+  font-weight: 600;
+}
+.seg-text {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.88rem;
+  transition: border-color 0.2s;
+}
+.seg-text:focus { outline: none; border-color: var(--amber); }
+
+/* QUESTION CARD */
+.q-card {
+  background: var(--white);
+  border: 1.5px solid rgba(12,12,12,0.08);
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.q-card.answered { border-color: rgba(34,197,94,0.3); }
+.q-card.error { border-color: var(--red); }
+.q-id {
+  font-size: 0.7rem;
+  color: var(--gray-400);
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+.q-text {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  color: var(--black);
+}
+.q-note {
+  font-size: 0.75rem;
+  color: var(--red);
+  background: rgba(238,39,55,0.06);
+  padding: 6px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+/* LIKERT SCALE */
+.likert-scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.likert-btn {
+  aspect-ratio: 1;
+  max-height: 56px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.likert-btn:hover { border-color: var(--amber); background: #FFFDF5; }
+.likert-btn.selected {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--black);
+}
+.likert-num { font-weight: 700; font-size: 1.1rem; }
+.likert-label { font-size: 0.55rem; text-align: center; line-height: 1.1; margin-top: 2px; color: var(--gray-600); }
+.likert-btn.selected .likert-label { color: var(--black); }
+
+/* OPEN TEXT */
+.open-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.88rem;
+  resize: vertical;
+  transition: border-color 0.2s;
+  line-height: 1.5;
+}
+.open-textarea:focus { outline: none; border-color: var(--amber); }
+
+/* NAV BUTTONS */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  gap: 12px;
+}
+.btn-nav {
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-prev {
+  background: var(--cream-dark);
+  color: var(--gray-600);
+}
+.btn-prev:hover { background: #EDE5D0; }
+.btn-next {
+  background: var(--amber);
+  color: var(--black);
+}
+.btn-next:hover { background: var(--amber-dark); transform: translateY(-1px); }
+.nav-info {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+}
+
+/* SUBMITTING */
+.submitting {
+  display: none;
+  text-align: center;
+  padding: 80px 24px;
+}
+.submitting.active { display: block; }
+.submitting-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* THANKS VIEW */
+.view-thanks {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: 40px 24px;
+  text-align: center;
+}
+.view-thanks.active { display: flex; }
+.thanks-icon { font-size: 3rem; margin-bottom: 20px; }
+.thanks-title { font-family: 'DM Serif Display', serif; font-size: 1.8rem; margin-bottom: 12px; }
+.thanks-msg { color: var(--gray-600); max-width: 480px; line-height: 1.6; }
+.thanks-date { color: var(--amber-dark); font-weight: 600; margin-top: 8px; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--black);
+  color: var(--cream);
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 999;
+  transition: transform 0.3s;
+  box-shadow: var(--shadow);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) {
+  .survey-container { padding: 20px 16px 80px; }
+  .likert-scale { gap: 6px; }
+  .likert-btn { max-height: 48px; }
+  .likert-label { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">ODARA.</div>
+  <div class="header-actions">
+    <a href="index.html" class="btn-back">← Voltar</a>
+    <button class="btn-save" onclick="savePartial()">💾 Salvar</button>
+  </div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+<!-- CLOSED VIEW -->
+<div class="view-closed" id="view-closed">
+  <div class="closed-icon">⏰</div>
+  <div class="closed-title">Coleta Encerrada</div>
+  <div class="closed-msg">O prazo para resposta desta pesquisa encerrou. Agradecemos a todos que participaram!</div>
+  <div class="closed-date">📅 Os resultados serão divulgados até 15 de maio de 2026.</div>
+  <div class="closed-link"><a href="index.html">← Voltar ao início</a></div>
+</div>
+
+<!-- SURVEY VIEW -->
+<div class="view" id="view-survey">
+  <div class="survey-container" id="survey-container"></div>
+  <div class="nav-row survey-container" style="max-width:680px;margin:0 auto;padding:0 24px 80px;" id="nav-row">
+    <button class="btn-nav btn-prev" id="btn-prev" onclick="prevSection()">← Anterior</button>
+    <span class="nav-info" id="nav-info"></span>
+    <button class="btn-nav btn-next" id="btn-next" onclick="nextSection()">Próximo →</button>
+  </div>
+</div>
+
+<!-- SUBMITTING -->
+<div class="submitting" id="view-submitting">
+  <div class="submitting-spinner"></div>
+  <div>Enviando respostas…</div>
+</div>
+
+<!-- THANKS VIEW -->
+<div class="view-thanks" id="view-thanks">
+  <div class="thanks-icon">✅</div>
+  <div class="thanks-title">Obrigado pela contribuição!</div>
+  <div class="thanks-msg">Suas respostas foram registradas com sucesso e farão parte da análise de cultura de segurança e qualidade da Odara, alinhada à FSSC 22000 v6.</div>
+  <div class="thanks-date">📅 Os resultados serão divulgados às equipes até 15 de maio de 2026.</div>
+  <div class="closed-link" style="margin-top:24px;"><a href="index.html">← Voltar ao início</a></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="survey-data.js"></script>
+<script>
+/* ===== STATE ===== */
+let currentSurveyType = '';
+let currentSurvey = null;
+let currentSectionIdx = -1; // -1 = segmentation
+let responses = {};
+let segResponses = {};
+let respondentId = '';
+
+/* ===== INIT ===== */
+function init() {
+  const params = new URLSearchParams(window.location.search);
+  currentSurveyType = params.get('type') || '';
+  
+  if (!currentSurveyType || !SURVEY_DATA[currentSurveyType]) {
+    window.location.href = 'index.html';
+    return;
+  }
+  
+  currentSurvey = SURVEY_DATA[currentSurveyType];
+  
+  // Check deadline
+  if (new Date() > SURVEY_DEADLINE) {
+    showView('view-closed');
+    return;
+  }
+  
+  // Generate respondent ID
+  respondentId = 'R' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4);
+  
+  // Restore session
+  const saved = localStorage.getItem('odara_session_' + currentSurveyType);
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      responses = s.responses || {};
+      segResponses = s.segResponses || {};
+      currentSectionIdx = s.sectionIdx || -1;
+      respondentId = s.respondentId || respondentId;
+    } catch(e) {}
+  }
+  
+  showView('view-survey');
+  renderSection();
+}
+
+function showView(id) {
+  document.querySelectorAll('.view, .view-closed, .view-thanks, .submitting').forEach(v => {
+    v.classList.remove('active');
+    v.style.display = 'none';
+  });
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('active');
+    el.style.display = el.classList.contains('view-closed') || el.classList.contains('view-thanks') ? 'flex' : 'block';
+  }
+}
+
+/* ===== RENDER ===== */
+function renderSection() {
+  const container = document.getElementById('survey-container');
+  const totalSections = currentSurvey.sections.length;
+  
+  // Progress
+  const progress = currentSectionIdx < 0 ? 0 : ((currentSectionIdx + 1) / (totalSections + 1)) * 100;
+  document.getElementById('progress-fill').style.width = progress + '%';
+  
+  // Nav info
+  const navInfo = document.getElementById('nav-info');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  
+  if (currentSectionIdx < 0) {
+    // SEGMENTATION
+    navInfo.textContent = `Seção 1 de ${totalSections + 1}`;
+    btnPrev.style.visibility = 'hidden';
+    btnNext.textContent = 'Próximo →';
+    renderSegmentation(container);
+  } else {
+    navInfo.textContent = `Seção ${currentSectionIdx + 2} de ${totalSections + 1}`;
+    btnPrev.style.visibility = 'visible';
+    btnNext.textContent = currentSectionIdx === totalSections - 1 ? 'Enviar ✓' : 'Próximo →';
+    renderQuestions(container, currentSurvey.sections[currentSectionIdx]);
+  }
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderSegmentation(container) {
+  let html = `
+    <div class="survey-title">${currentSurvey.title}</div>
+    <div class="survey-sub">${currentSurvey.subtitle} · ${currentSurvey.time}</div>
+    <div class="survey-intro">${currentSurvey.intro}</div>
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-info">
+        <div class="section-title">Identificação</div>
+        <div class="section-count">Seus dados de segmentação (anônimos)</div>
+      </div>
+    </div>
+  `;
+  
+  currentSurvey.segmentation.forEach(seg => {
+    html += `<div class="seg-card" data-seg="${seg.id}">`;
+    html += `<div class="seg-label">${seg.label}</div>`;
+    
+    if (seg.type === 'text') {
+      const val = segResponses[seg.id] || '';
+      html += `<input type="text" class="seg-text" data-seg-id="${seg.id}" value="${val}" placeholder="Digite aqui…">`;
+    } else {
+      html += `<div class="seg-options">`;
+      seg.options.forEach(opt => {
+        const sel = segResponses[seg.id] === opt ? 'selected' : '';
+        html += `<button class="seg-opt ${sel}" data-seg-id="${seg.id}" data-val="${opt}">${opt}</button>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+  
+  container.innerHTML = html;
+  bindSegEvents();
+}
+
+function renderQuestions(container, section) {
+  const sIdx = currentSectionIdx + 2;
+  let html = `
+    <div class="section-header">
+      <div class="section-num">${String(sIdx).padStart(2,'0')}</div>
+      <div class="section-info">
+        <div class="section-title">${section.title}</div>
+        <div class="section-count">${section.questions.length} pergunta${section.questions.length > 1 ? 's' : ''} · ${section.dimension}</div>
+      </div>
+    </div>
+  `;
+  
+  section.questions.forEach(q => {
+    const answered = responses[q.id] !== undefined;
+    html += `<div class="q-card ${answered ? 'answered' : ''}" id="qc-${q.id}">`;
+    html += `<div class="q-id">${q.id}</div>`;
+    html += `<div class="q-text">${q.text}</div>`;
+    
+    if (q.note) {
+      html += `<div class="q-note">${q.note}</div>`;
+    }
+    
+    if (q.type === 'likert') {
+      const labels = ['Discordo\ntotalmente','Discordo','Neutro','Concordo','Concordo\ntotalmente'];
+      html += `<div class="likert-scale">`;
+      for (let i = 1; i <= 5; i++) {
+        const sel = responses[q.id] == i ? 'selected' : '';
+        html += `<button class="likert-btn ${sel}" data-qid="${q.id}" data-val="${i}">
+          <span class="likert-num">${i}</span>
+          <span class="likert-label">${labels[i-1].replace('\n','<br>')}</span>
+        </button>`;
+      }
+      html += `</div>`;
+    } else if (q.type === 'open') {
+      const val = responses[q.id] || '';
+      html += `<textarea class="open-textarea" data-qid="${q.id}" placeholder="Sua resposta aqui…">${val}</textarea>`;
+    }
+    
+    html += `</div>`;
+  });
+  
+  container.innerHTML = html;
+  bindQEvents();
+}
+
+/* ===== EVENT BINDING ===== */
+function bindSegEvents() {
+  document.querySelectorAll('.seg-opt').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.dataset.segId;
+      document.querySelectorAll(`.seg-opt[data-seg-id="${id}"]`).forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+      segResponses[id] = this.dataset.val;
+      autoSave();
+    });
+  });
+  
+  document.querySelectorAll('.seg-text').forEach(input => {
+    input.addEventListener('input', function() {
+      segResponses[this.dataset.segId] = this.value;
+      autoSave();
+    });
+  });
+}
+
+function bindQEvents() {
+  document.querySelectorAll('.likert-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const qid = this.dataset.qid;
+      document.querySelectorAll(`.likert-btn[data-qid="${qid}"]`).forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+      responses[qid] = parseInt(this.dataset.val);
+      document.getElementById('qc-' + qid).classList.add('answered');
+      document.getElementById('qc-' + qid).classList.remove('error');
+      autoSave();
+    });
+  });
+  
+  document.querySelectorAll('.open-textarea').forEach(ta => {
+    ta.addEventListener('input', function() {
+      responses[this.dataset.qid] = this.value;
+      if (this.value.trim()) {
+        document.getElementById('qc-' + this.dataset.qid).classList.add('answered');
+      }
+      autoSave();
+    });
+  });
+}
+
+/* ===== VALIDATION ===== */
+function validate() {
+  if (currentSectionIdx < 0) return true; // segmentation is optional
+  
+  const section = currentSurvey.sections[currentSectionIdx];
+  let valid = true;
+  
+  section.questions.forEach(q => {
+    if (q.type === 'likert' && responses[q.id] === undefined) {
+      document.getElementById('qc-' + q.id).classList.add('error');
+      valid = false;
+    }
+  });
+  
+  if (!valid) {
+    showToast('⚠️ Responda todas as perguntas obrigatórias antes de continuar.');
+    const first = document.querySelector('.q-card.error');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return valid;
+}
+
+/* ===== NAVIGATION ===== */
+function nextSection() {
+  if (!validate()) return;
+  
+  if (currentSectionIdx < currentSurvey.sections.length - 1) {
+    currentSectionIdx++;
+    renderSection();
+  } else {
+    submitSurvey();
+  }
+}
+
+function prevSection() {
+  if (currentSectionIdx >= -1) {
+    currentSectionIdx--;
+    if (currentSectionIdx < -1) currentSectionIdx = -1;
+    renderSection();
+  }
+}
+
+/* ===== SUBMIT ===== */
+async function submitSurvey() {
+  showView('view-submitting');
+  document.getElementById('view-submitting').style.display = 'block';
+  document.getElementById('progress-fill').style.width = '100%';
+  
+  const payload = {
+    respondent_id: respondentId,
+    survey_id: currentSurvey.id,
+    survey_type: currentSurveyType,
+    submitted_at: new Date().toISOString(),
+    segmentation: segResponses,
+    responses
+  };
+  
+  // Save locally
+  saveToLocal(payload);
+  
+  // Try Supabase
+  await sendToSupabase(payload);
+  
+  // Clear session
+  localStorage.removeItem('odara_session_' + currentSurveyType);
+  
+  // Show thanks
+  document.getElementById('view-submitting').style.display = 'none';
+  showView('view-thanks');
+  document.getElementById('view-thanks').style.display = 'flex';
+}
+
+async function sendToSupabase(payload) {
+  const URL = window.SUPABASE_URL || '';
+  const KEY = window.SUPABASE_ANON_KEY || '';
+  if (!URL || !KEY) return false;
+  
+  try {
+    // Insert respondent
+    await fetch(`${URL}/rest/v1/respondents`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': KEY,
+        'Authorization': `Bearer ${KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        id: payload.respondent_id,
+        survey_type: payload.survey_type,
+        survey_id: payload.survey_id,
+        segmentation: payload.segmentation,
+        submitted_at: payload.submitted_at
+      })
+    });
+    
+    // Insert responses
+    const rows = Object.entries(payload.responses).map(([qid, val]) => ({
+      respondent_id: payload.respondent_id,
+      question_id: qid,
+      value: String(val),
+      survey_type: payload.survey_type,
+      created_at: payload.submitted_at
+    }));
+    
+    await fetch(`${URL}/rest/v1/responses`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': KEY,
+        'Authorization': `Bearer ${KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(rows)
+    });
+    
+    return true;
+  } catch(e) {
+    console.warn('[Odara] Supabase error:', e);
+    return false;
+  }
+}
+
+function saveToLocal(payload) {
+  const k = 'odara_responses';
+  const existing = JSON.parse(localStorage.getItem(k) || '[]');
+  existing.push(payload);
+  localStorage.setItem(k, JSON.stringify(existing));
+}
+
+/* ===== AUTO SAVE ===== */
+function autoSave() {
+  localStorage.setItem('odara_session_' + currentSurveyType, JSON.stringify({
+    responses, segResponses, sectionIdx: currentSectionIdx, respondentId,
+    savedAt: new Date().toISOString()
+  }));
+}
+
+function savePartial() {
+  autoSave();
+  showToast('✅ Progresso salvo! Continue depois neste dispositivo.');
+}
+
+/* ===== TOAST ===== */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ===== START ===== */
+init();
+</script>
+</body>
+</html>

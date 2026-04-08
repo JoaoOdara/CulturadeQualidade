@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Odara — Pesquisa de Cultura da Qualidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --amber: #FFB81D;
+  --amber-dark: #E5A210;
+  --red: #EE2737;
+  --cream: #FFF8EA;
+  --cream-dark: #F5EDDA;
+  --black: #0C0C0C;
+  --black-soft: #1A1A1A;
+  --gray-600: #4A4A4A;
+  --gray-400: #8A8A8A;
+  --gray-200: #D4D4D4;
+  --white: #FFFFFF;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 24px rgba(12,12,12,0.08);
+  --shadow-lg: 0 12px 48px rgba(12,12,12,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--black);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--black);
+  color: var(--cream);
+  padding: 18px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  color: var(--amber);
+}
+.header-sub {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.btn-dashboard {
+  background: var(--amber);
+  color: var(--black);
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-dashboard:hover {
+  background: var(--amber-dark);
+  transform: translateY(-1px);
+}
+
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  padding: 72px 24px 48px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--black);
+  color: var(--amber);
+  padding: 8px 18px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.hero-badge .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--amber);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1.15;
+  margin-bottom: 8px;
+  color: var(--black);
+}
+.hero h1 span {
+  color: var(--amber-dark);
+}
+.hero-sub {
+  font-size: 1rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+  max-width: 540px;
+  margin: 16px auto 0;
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+  max-width: 720px;
+  margin: 0 auto 48px;
+  padding: 0 24px;
+}
+.timeline-title {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.timeline-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.timeline-item {
+  background: var(--white);
+  border: 1.5px solid rgba(12,12,12,0.08);
+  border-radius: var(--radius-sm);
+  padding: 16px 14px;
+  text-align: center;
+  transition: all 0.2s;
+  position: relative;
+}
+.timeline-item.active {
+  border-color: var(--amber);
+  background: linear-gradient(135deg, #FFFDF5, #FFF8EA);
+}
+.timeline-item.active::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  height: 3px;
+  background: var(--amber);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.tl-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+}
+.tl-dot.green { background: #22C55E; }
+.tl-dot.amber { background: var(--amber); }
+.tl-dot.gray { background: var(--gray-200); }
+.tl-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.tl-date {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+}
+
+/* ===== PROFILE CARDS ===== */
+.profiles-title {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.profiles {
+  max-width: 800px;
+  margin: 0 auto 32px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+.profile-card {
+  background: var(--white);
+  border: 1.5px solid rgba(12,12,12,0.08);
+  border-radius: var(--radius);
+  padding: 28px 20px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.profile-card:hover {
+  border-color: var(--amber);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.profile-card:hover .pc-arrow {
+  transform: translateX(4px);
+  color: var(--amber-dark);
+}
+.pc-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+.pc-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+.pc-desc {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+.pc-time {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  font-weight: 500;
+}
+.pc-arrow {
+  margin-top: 8px;
+  font-size: 1.2rem;
+  color: var(--gray-400);
+  transition: all 0.2s;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  text-align: center;
+  padding: 32px 24px;
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  border-top: 1px solid rgba(12,12,12,0.06);
+}
+.footer-anon {
+  margin-bottom: 12px;
+  font-size: 0.78rem;
+  color: var(--gray-600);
+}
+.footer-badges {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.footer-badge {
+  background: var(--black);
+  color: var(--amber);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ===== DB STATUS ===== */
+.db-status {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--black);
+  color: var(--cream);
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  z-index: 100;
+  box-shadow: var(--shadow);
+  transition: all 0.3s;
+}
+.db-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transition: background 0.3s;
+}
+.db-dot.ok { background: #22C55E; }
+.db-dot.err { background: var(--red); }
+.db-dot.warn { background: var(--amber); }
+.db-dot.checking { background: var(--gray-400); animation: pulse 1s infinite; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(12,12,12,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 40px 36px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.modal-brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--amber-dark);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.modal-desc {
+  font-size: 0.82rem;
+  color: var(--gray-400);
+  margin-bottom: 24px;
+}
+.modal-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  text-align: center;
+  transition: border-color 0.2s;
+  margin-bottom: 8px;
+}
+.modal-input:focus {
+  outline: none;
+  border-color: var(--amber);
+}
+.modal-error {
+  color: var(--red);
+  font-size: 0.78rem;
+  min-height: 20px;
+  margin-bottom: 12px;
+}
+.modal-btns {
+  display: flex;
+  gap: 10px;
+}
+.modal-btns button {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-cancel {
+  background: var(--cream);
+  color: var(--gray-600);
+}
+.btn-cancel:hover { background: var(--cream-dark); }
+.btn-enter {
+  background: var(--amber);
+  color: var(--black);
+}
+.btn-enter:hover { background: var(--amber-dark); }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .header { padding: 14px 16px; }
+  .header-sub { display: none; }
+  .hero { padding: 48px 16px 32px; }
+  .timeline-row { grid-template-columns: repeat(2, 1fr); }
+  .profiles { grid-template-columns: 1fr 1fr; padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div>
+    <div class="header-brand">ODARA.</div>
+    <div class="header-sub">Painel Cultural · Segurança do Produto & Qualidade</div>
+  </div>
+  <div class="header-right">
+    <button class="btn-dashboard" onclick="openModal()">📊 Painel Analítico</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span class="dot"></span> Coleta ativa · Rodada 2026-H1</div>
+  <h1>Pesquisa de<br><span>Cultura</span><br>Qualidade & Segurança de Alimentos</h1>
+  <p class="hero-sub">Esta pesquisa é anônima e faz parte do sistema de gestão de cultura da Odara, alinhado à certificação FSSC 22000 v6. Suas respostas constroem um ambiente mais seguro para toda a cadeia.</p>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline">
+  <div class="timeline-title">📅 Calendário da pesquisa</div>
+  <div class="timeline-row">
+    <div class="timeline-item active">
+      <div class="tl-dot green"></div>
+      <div class="tl-label">Coleta de respostas</div>
+      <div class="tl-date">Até 24/04/2026</div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-dot amber"></div>
+      <div class="tl-label">Divulgação dos resultados</div>
+      <div class="tl-date">Até 15/05/2026</div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-dot gray"></div>
+      <div class="tl-label">Execução do plano de ação</div>
+      <div class="tl-date">Até Setembro/2026</div>
+    </div>
+    <div class="timeline-item">
+      <div class="tl-dot gray"></div>
+      <div class="tl-label">Nova pesquisa de clima</div>
+      <div class="tl-date">Outubro/2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROFILES -->
+<div class="profiles-title">Selecione seu perfil para iniciar</div>
+<section class="profiles">
+  <a class="profile-card" href="survey.html?type=internos">
+    <div class="pc-icon">👷</div>
+    <div class="pc-title">Colaborador</div>
+    <div class="pc-desc">Operacional · Administrativo · Produção</div>
+    <div class="pc-time">~10 min</div>
+    <div class="pc-arrow">→</div>
+  </a>
+  <a class="profile-card" href="survey.html?type=liderancas">
+    <div class="pc-icon">🏆</div>
+    <div class="pc-title">Liderança</div>
+    <div class="pc-desc">Supervisor · Coordenador · Gerente · Diretor</div>
+    <div class="pc-time">~12 min</div>
+    <div class="pc-arrow">→</div>
+  </a>
+  <a class="profile-card" href="survey.html?type=fornecedores">
+    <div class="pc-icon">🤝</div>
+    <div class="pc-title">Fornecedor</div>
+    <div class="pc-desc">Parceiro crítico de cadeia produtiva</div>
+    <div class="pc-time">~6 min</div>
+    <div class="pc-arrow">→</div>
+  </a>
+  <a class="profile-card" href="survey.html?type=distribuidores">
+    <div class="pc-icon">🏪</div>
+    <div class="pc-title">Distribuidor / Cliente</div>
+    <div class="pc-desc">Parceiro comercial e canais de venda</div>
+    <div class="pc-time">~5 min</div>
+    <div class="pc-arrow">→</div>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-anon">🔒 Anonimato garantido · Sem identificação individual · Apenas para melhoria interna</div>
+  <div>© 2026 Odara Alfajores</div>
+  <div class="footer-badges">
+    <span class="footer-badge">FSSC 22000 v6</span>
+    <span class="footer-badge">GFSI</span>
+  </div>
+</footer>
+
+<!-- DB STATUS -->
+<div class="db-status" id="db-status">
+  <span class="db-dot checking" id="db-dot"></span>
+  <span id="db-text">Verificando banco…</span>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-brand">ODARA.</div>
+    <div class="modal-desc">Acesso restrito — equipe de gestão</div>
+    <input type="password" class="modal-input" id="pwd-input" placeholder="Senha de acesso" autocomplete="off">
+    <div class="modal-error" id="pwd-error"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-enter" onclick="tryLogin()">Acessar →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== SUPABASE CONFIG ===== */
+/* Defina suas credenciais aqui ou via variáveis globais */
+const SUPABASE_URL = window.SUPABASE_URL || '';
+const SUPABASE_KEY = window.SUPABASE_ANON_KEY || '';
+
+/* ===== DB STATUS CHECK ===== */
+async function checkDB() {
+  const dot = document.getElementById('db-dot');
+  const txt = document.getElementById('db-text');
+  
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    dot.className = 'db-dot warn';
+    txt.textContent = 'Modo offline (localStorage)';
+    return;
+  }
+  
+  try {
+    const r = await fetch(SUPABASE_URL + '/rest/v1/', {
+      method: 'HEAD',
+      headers: { 'apikey': SUPABASE_KEY }
+    });
+    if (r.ok) {
+      dot.className = 'db-dot ok';
+      txt.textContent = 'Banco conectado';
+    } else {
+      dot.className = 'db-dot err';
+      txt.textContent = 'Banco sem conexão';
+    }
+  } catch(e) {
+    dot.className = 'db-dot err';
+    txt.textContent = 'Banco sem conexão';
+  }
+}
+checkDB();
+
+/* ===== PASSWORD MODAL ===== */
+const DASHBOARD_PWD = 'odara2026';
+
+function openModal() {
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('pwd-input').value = '';
+  document.getElementById('pwd-error').textContent = '';
+  setTimeout(() => document.getElementById('pwd-input').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+function tryLogin() {
+  const v = document.getElementById('pwd-input').value.trim();
+  if (!v) {
+    document.getElementById('pwd-error').textContent = 'Digite a senha de acesso.';
+    return;
+  }
+  if (v === DASHBOARD_PWD) {
+    sessionStorage.setItem('odara_auth', '1');
+    window.location.href = 'dashboard.html';
+  } else {
+    document.getElementById('pwd-error').textContent = 'Senha incorreta. Tente novamente.';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+document.getElementById('pwd-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') tryLogin();
+});
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>

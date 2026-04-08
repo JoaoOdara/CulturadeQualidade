@@ -16,7 +16,7 @@ window.ODARA_PASSWORD = 'odara';
 // ── Supabase ─────────────────────────────────────────────────
 // 1. Acesse supabase.com → seu projeto → Settings → API
 // 2. Copie "Project URL" e "anon public" key abaixo
-window.SUPABASE_URL      = 'https://joaoodara.github.io/CulturadeQualidade/';
+window.SUPABASE_URL      = 'khqbimmcibutfrfmkoxr';
 window.SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtocWJpbW1jaWJ1dGZyZm1rb3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTY1NjUsImV4cCI6MjA4OTkzMjU2NX0.w3vRAPhiU7Zavgkiv-ldjbHc_UJeGH9ck2tq_YN6MBo';
 
 // ── NÃO EDITAR ABAIXO ────────────────────────────────────────
@@ -28,9 +28,9 @@ window.isDeadlinePassed = function () {
 window.supabaseConfigured = function () {
   return (
     window.SUPABASE_URL &&
-    !window.SUPABASE_URL.includes('SEU_PROJETO') &&
+    !window.SUPABASE_URL.includes('khqbimmcibutfrfmkoxr') &&
     window.SUPABASE_ANON_KEY &&
-    !window.SUPABASE_ANON_KEY.includes('SUA_ANON')
+    !window.SUPABASE_ANON_KEY.includes('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtocWJpbW1jaWJ1dGZyZm1rb3hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTY1NjUsImV4cCI6MjA4OTkzMjU2NX0.w3vRAPhiU7Zavgkiv-ldjbHc_UJeGH9ck2tq_YN6MBo')
   );
 };
 

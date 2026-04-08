@@ -8,10 +8,10 @@
 // ── Prazo de coleta ──────────────────────────────────────────
 // Após esta data o formulário é bloqueado automaticamente.
 // Formato ISO 8601 com fuso: 'YYYY-MM-DDTHH:MM:SS-03:00'
-window.ODARA_DEADLINE = new Date('2026-04-24T23:59:59-03:00');
+window.ODARA_DEADLINE = new Date('2026-12-24T23:59:59-03:00');
 
 // ── Senha do painel analítico ────────────────────────────────
-window.ODARA_PASSWORD = 'odara2026';
+window.ODARA_PASSWORD = 'odara';
 
 // ── Supabase ─────────────────────────────────────────────────
 // 1. Acesse supabase.com → seu projeto → Settings → API

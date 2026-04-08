@@ -5,7 +5,7 @@
 
 // ── Prazo de coleta ──────────────────────────────────────────
 // Após esta data, o formulário é bloqueado automaticamente
-window.ODARA_DEADLINE = new Date('2025-04-24T23:59:59-03:00');
+window.ODARA_DEADLINE = new Date('2026-04-24T23:59:59-03:00');
 
 // ── Senha do painel ──────────────────────────────────────────
 window.ODARA_PASSWORD = 'odara';

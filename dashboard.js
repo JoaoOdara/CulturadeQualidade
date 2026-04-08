@@ -6,7 +6,7 @@
 // ══════════════════════════════════════════════
 function authCheck() {
   const v  = document.getElementById('auth-in').value;
-  const pw = window.ODARA_PASSWORD || 'odara2026';
+  const pw = window.ODARA_PASSWORD || 'odara';
   if (v === pw) {
     sessionStorage.setItem('odara_auth', '1');
     document.getElementById('auth-ov').style.display   = 'none';

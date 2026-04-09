@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odara — Pesquisa de Cultura</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+:root{--y:#FFB81D;--r:#EE2737;--c:#FFF8EA;--p:#0C0C0C;--g:#565555;}
+body{font-family:'Barlow',sans-serif;background:var(--c);color:var(--p);min-height:100vh;}
+
+/* DEADLINE BLOCK */
+.deadline-block{min-height:100vh;background:var(--p);display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.dl-card{text-align:center;max-width:460px;}
+.dl-icon{font-size:48px;margin-bottom:20px;}
+.dl-title{font-family:'Barlow',sans-serif;font-size:24px;font-weight:900;color:#fff;text-transform:uppercase;margin-bottom:8px;}
+.dl-title span{color:var(--y);}
+.dl-desc{font-size:13px;color:#565555;line-height:1.75;margin-bottom:28px;}
+.dl-info{background:rgba(255,184,29,.06);border:1px solid rgba(255,184,29,.18);border-radius:3px;padding:14px 18px;margin-bottom:28px;font-size:12px;color:rgba(255,255,255,.45);}
+.dl-info strong{color:var(--y);}
+.btn-home{background:var(--y);color:var(--p);font-family:'Barlow',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:12px 26px;border-radius:2px;text-decoration:none;display:inline-block;transition:all .2s;}
+.btn-home:hover{background:#FFC94D;}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:var(--p);border-bottom:2px solid rgba(255,184,29,.16);}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;padding:11px 26px;gap:12px;}
+.hdr-brand{display:flex;align-items:center;gap:9px;}
+.hdr-logo{font-family:'Barlow',sans-serif;font-size:15px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;}
+.hdr-logo span{color:var(--y);}
+.hdr-tag{background:rgba(255,184,29,.14);border:1px solid rgba(255,184,29,.28);color:var(--y);font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:3px 8px;border-radius:2px;}
+.btn-back{color:#565555;font-size:10.5px;font-weight:500;text-decoration:none;transition:color .2s;}
+.btn-back:hover{color:var(--y);}
+.btn-save{background:none;border:1px solid rgba(255,184,29,.26);color:rgba(255,255,255,.4);font-family:'Barlow',sans-serif;font-size:9.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:6px 11px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.btn-save:hover{border-color:var(--y);color:var(--y);}
+
+.prog-wrap{display:flex;align-items:center;gap:9px;padding:0 26px 9px;}
+.prog-track{flex:1;height:2.5px;background:rgba(255,184,29,.1);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--y),#FFC94D);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);width:0%;}
+.prog-label{font-size:9.5px;color:#565555;white-space:nowrap;font-weight:500;}
+
+/* MAIN */
+.main{max-width:680px;margin:0 auto;padding:32px 18px 72px;}
+.sec-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid rgba(12,12,12,.07);}
+.sec-num{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:700;color:var(--y);opacity:.2;line-height:1;flex-shrink:0;letter-spacing:-2px;}
+.sec-name{font-size:17px;font-weight:700;color:var(--p);margin-bottom:3px;}
+.sec-desc{font-size:11px;color:var(--g);line-height:1.5;}
+
+/* QUESTION CARDS */
+.q-card{background:#fff;border:1.5px solid rgba(12,12,12,.08);border-radius:5px;padding:16px 18px;margin-bottom:10px;transition:border-color .2s;animation:sin .2s ease forwards;}
+@keyframes sin{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+.q-card:hover{border-color:rgba(255,184,29,.26);}
+.q-card.answered{border-left:3px solid var(--y);}
+.q-card.req-err{border-color:var(--r);background:rgba(238,39,55,.015);}
+.q-id{font-size:8.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--g);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.q-badge{background:rgba(255,184,29,.14);color:#A07010;font-size:7.5px;padding:2px 5px;border-radius:2px;font-weight:700;}
+.q-text{font-size:13.5px;font-weight:500;color:var(--p);line-height:1.6;margin-bottom:14px;}
+.q-req{color:var(--r);margin-left:2px;}
+
+/* LIKERT 5 colunas — menor e harmonioso */
+.lk-wrap{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:380px;}
+.lk-opt{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.lk-btn{width:100%;aspect-ratio:1;min-width:0;border:1.5px solid rgba(12,12,12,.1);border-radius:3px;background:var(--c);font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:var(--g);cursor:pointer;transition:all .13s;display:flex;align-items:center;justify-content:center;}
+.lk-btn:hover{border-color:var(--y);color:var(--p);background:rgba(255,184,29,.07);}
+.lk-btn.sel{background:var(--p);border-color:var(--p);color:var(--y);box-shadow:0 2px 9px rgba(12,12,12,.16);}
+.lk-lbl{font-size:7.5px;font-weight:500;color:var(--g);text-align:center;max-width:50px;line-height:1.25;text-transform:uppercase;letter-spacing:.15px;}
+
+/* SELECTS / TEXTAREA / TEXT */
+.f-sel{width:100%;padding:10px 13px;border:1.5px solid rgba(12,12,12,.1);border-radius:3px;background:var(--c);font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;color:var(--p);appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23565555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;cursor:pointer;transition:border-color .2s;}
+.f-sel:focus{outline:none;border-color:var(--y);}
+.f-text{width:100%;padding:10px 13px;border:1.5px solid rgba(12,12,12,.1);border-radius:3px;background:var(--c);font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;color:var(--p);transition:border-color .2s;}
+.f-text:focus{outline:none;border-color:var(--y);}
+.f-ta{width:100%;padding:11px 13px;border:1.5px solid rgba(12,12,12,.1);border-radius:3px;background:var(--c);font-family:'Barlow',sans-serif;font-size:13px;color:var(--p);resize:vertical;min-height:84px;line-height:1.62;transition:border-color .2s;}
+.f-ta:focus{outline:none;border-color:var(--y);}
+.char-ct{text-align:right;font-size:9.5px;color:var(--g);margin-top:3px;}
+
+/* NAV */
+.s-nav{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:18px;border-top:1px solid rgba(12,12,12,.07);}
+.btn-prev{background:none;border:1.5px solid rgba(12,12,12,.12);color:var(--g);font-family:'Barlow',sans-serif;font-size:10.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:11px 22px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.btn-prev:hover{border-color:var(--p);color:var(--p);}
+.btn-next{background:var(--p);color:var(--y);border:2px solid var(--p);font-family:'Barlow',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:11px 30px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.btn-next:hover{background:var(--y);color:var(--p);border-color:var(--y);transform:translateY(-1px);box-shadow:0 4px 16px rgba(255,184,29,.26);}
+
+/* SENDING */
+.sending-ov{position:fixed;inset:0;background:rgba(255,248,234,.9);z-index:200;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+.spin{width:40px;height:40px;border:3px solid rgba(255,184,29,.2);border-top:3px solid var(--y);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* OBRIGADO */
+.thanks{min-height:100vh;background:var(--p);display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.ty-card{text-align:center;max-width:460px;}
+.ty-icon{width:64px;height:64px;background:rgba(255,184,29,.11);border:2px solid rgba(255,184,29,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 22px;}
+.ty-title{font-family:'Barlow',sans-serif;font-size:26px;font-weight:900;color:#fff;text-transform:uppercase;margin-bottom:6px;}
+.ty-title span{color:var(--y);}
+.ty-desc{font-size:12.5px;color:#565555;line-height:1.75;margin-bottom:24px;}
+.ty-info{background:rgba(255,184,29,.06);border:1px solid rgba(255,184,29,.17);border-radius:3px;padding:13px 17px;margin-bottom:26px;font-size:11.5px;color:rgba(255,255,255,.45);}
+.ty-info strong{color:var(--y);}
+.btn-ty{background:var(--y);color:var(--p);font-family:'Barlow',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:12px 26px;border-radius:2px;text-decoration:none;display:inline-block;transition:all .2s;}
+.btn-ty:hover{background:#FFC94D;}
+
+/* TOAST */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--p);color:var(--y);padding:9px 20px;border-radius:2px;font-family:'Barlow',sans-serif;font-size:11.5px;font-weight:600;opacity:0;transition:all .3s;z-index:9999;white-space:nowrap;pointer-events:none;border:1px solid rgba(255,184,29,.26);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:560px){
+  .hdr-top{padding:9px 14px;gap:8px;}
+  .hdr-logo{font-size:13px;}
+  .hdr-tag{font-size:7px;padding:2px 6px;}
+  .btn-back{font-size:9px;}
+  .btn-save{font-size:8px;padding:5px 9px;}
+  .prog-wrap{padding:0 14px 7px;}
+  .main{padding:18px 14px 60px;}
+  .sec-hdr{gap:10px;padding-bottom:14px;}
+  .sec-num{font-size:30px;}
+  .sec-name{font-size:15px;}
+  .q-card{padding:14px 14px;}
+  .q-text{font-size:13px;margin-bottom:12px;}
+  .lk-wrap{max-width:100%;gap:5px;}
+  .lk-btn{font-size:13px;}
+  .lk-lbl{font-size:6.5px;max-width:42px;}
+  .f-sel,.f-text,.f-ta{font-size:14px;padding:10px 12px;}
+  .s-nav{flex-direction:column-reverse;gap:8px;}
+  .btn-prev,.btn-next{width:100%;text-align:center;}
+  .dl-card,.ty-card{padding:0 10px;}
+  .dl-title,.ty-title{font-size:20px;}
+}
+@media(max-width:380px){
+  .lk-wrap{gap:4px;}
+  .lk-btn{font-size:12px;}
+  .lk-lbl{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- DEADLINE BLOCK (hidden by default, shown via JS) -->
+<div id="view-deadline" class="deadline-block" style="display:none;">
+  <div class="dl-card">
+    <div class="dl-icon">⏰</div>
+    <h2 class="dl-title">Coleta <span>Encerrada</span></h2>
+    <p class="dl-desc">O prazo para resposta desta pesquisa encerrou. Agradecemos a todos que participaram!</p>
+    <div class="dl-info">
+      📅 Os resultados serão divulgados até <strong>15 de maio de 2026</strong>.
+    </div>
+    <a href="index.html" class="btn-home">← Voltar ao início</a>
+  </div>
+</div>
+
+<!-- SURVEY -->
+<div id="view-survey" style="display:none;">
+  <header class="hdr">
+    <div class="hdr-top">
+      <div class="hdr-brand">
+        <span class="hdr-logo">ODARA<span>.</span></span>
+        <span class="hdr-tag" id="survey-tag"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;">
+        <a href="index.html" class="btn-back">← Voltar</a>
+        <button class="btn-save" onclick="savePartial()">💾 Salvar</button>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <span class="prog-label" id="prog-label">Seção 1 de —</span>
+    </div>
+  </header>
+  <div class="main">
+    <div class="sec-hdr">
+      <div class="sec-num" id="sec-num">01</div>
+      <div><div class="sec-name" id="sec-name"></div><div class="sec-desc" id="sec-desc"></div></div>
+    </div>
+    <div id="q-container"></div>
+    <div class="s-nav">
+      <button class="btn-prev" id="btn-prev" onclick="prevSec()" style="display:none">← Anterior</button>
+      <button class="btn-next" id="btn-next" onclick="nextSec()">Próximo →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SENDING -->
+<div id="view-sending" class="sending-ov" style="display:none;">
+  <div class="spin"></div>
+  <div style="font-family:'Barlow',sans-serif;font-size:13px;color:#565555;font-weight:500;">Enviando respostas…</div>
+</div>
+
+<!-- OBRIGADO -->
+<div id="view-thanks" class="thanks" style="display:none;">
+  <div class="ty-card">
+    <div class="ty-icon">✅</div>
+    <h2 class="ty-title">Obrigado pela <span>contribuição!</span></h2>
+    <p class="ty-desc">Suas respostas foram registradas com sucesso e farão parte da análise de cultura de segurança e qualidade da Odara, alinhada à FSSC 22000 v6.</p>
+    <div class="ty-info">📅 Os resultados serão divulgados às equipes até <strong>15 de maio de 2026</strong>.</div>
+    <a href="index.html" class="btn-ty">← Voltar ao início</a>
+  </div>
+</div>
+
+<script>
+/* Diagnóstico global — mostra erro na tela se algo quebrar */
+window.onerror = function(msg, src, line) {
+  document.body.style.background = '#FFF8EA';
+  document.body.innerHTML = '<div style="padding:40px;font-family:Barlow,sans-serif;max-width:500px;margin:40px auto;text-align:center;">'
+    + '<div style="font-size:36px;margin-bottom:16px;">⚠️</div>'
+    + '<h2 style="margin-bottom:8px;">Erro ao carregar pesquisa</h2>'
+    + '<p style="color:#565555;font-size:13px;margin-bottom:12px;">' + msg + '</p>'
+    + '<p style="color:#999;font-size:11px;">Arquivo: ' + (src||'').split('/').pop() + ' linha ' + line + '</p>'
+    + '<a href="index.html" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#FFB81D;color:#0C0C0C;text-decoration:none;font-weight:700;border-radius:3px;">← Voltar</a>'
+    + '</div>';
+};
+</script>
+<script src="config.js?v=20260409b"></script>
+<script src="survey-data.js?v=20260409b"></script>
+<script>
+/* LIKERT_LABELS já definido em survey-data.js */
+
+let surveyType=null, survey=null, secIdx=0, responses={};
+let respondentId = 'r_'+Math.random().toString(36).substr(2,9)+'_'+Date.now();
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    // Fallback deadline caso config.js não carregue
+    var deadline = window.ODARA_DEADLINE || new Date('2026-04-24T23:59:59-03:00');
+    if (new Date() > deadline) {
+      document.getElementById('view-deadline').style.display='flex';
+      return;
+    }
+
+    if (typeof SURVEY_DATA === 'undefined') {
+      document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;"><h2>Erro ao carregar pesquisa</h2><p>O arquivo survey-data.js não foi encontrado.</p><a href="index.html">← Voltar</a></div>';
+      return;
+    }
+
+    const p = new URLSearchParams(window.location.search);
+    const t = p.get('type');
+    if (!t || !SURVEY_DATA[t]) { window.location.href='index.html'; return; }
+
+  // Restore partial from sessionStorage only (not localStorage)
+  const saved = sessionStorage.getItem('odara_partial_'+t);
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      if (confirm('Você tem progresso salvo nesta sessão. Continuar de onde parou?')) {
+        responses = s.responses; secIdx = s.secIdx; respondentId = s.respondentId;
+      } else { sessionStorage.removeItem('odara_partial_'+t); }
+    } catch(e) {}
+  }
+
+  surveyType=t; survey=SURVEY_DATA[t];
+  document.getElementById('survey-tag').textContent = survey.tag;
+  document.getElementById('view-survey').style.display='block';
+  renderSection();
+  } catch(err) {
+    console.error('Erro ao iniciar pesquisa:', err);
+    document.body.innerHTML = '<div style="padding:40px;text-align:center;font-family:sans-serif;"><h2>Erro ao carregar</h2><p>'+err.message+'</p><a href="index.html">← Voltar</a></div>';
+  }
+});
+
+/* ── Render ── */
+function renderSection() {
+  const secs=survey.sections, sec=secs[secIdx];
+  document.getElementById('sec-num').textContent = String(secIdx+1).padStart(2,'0');
+  document.getElementById('sec-name').textContent = sec.title;
+  document.getElementById('sec-desc').textContent = sec.desc||'';
+  const pct = Math.round((secIdx/secs.length)*100);
+  document.getElementById('prog-fill').style.width = pct+'%';
+  document.getElementById('prog-label').textContent = `Seção ${secIdx+1} de ${secs.length}`;
+  document.getElementById('btn-prev').style.display = secIdx>0?'inline-block':'none';
+  document.getElementById('btn-next').textContent = secIdx===secs.length-1?'Enviar ✓':'Próximo →';
+  const c = document.getElementById('q-container');
+  c.innerHTML='';
+  sec.questions.forEach(q => c.appendChild(buildCard(q)));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildCard(q) {
+  const card = document.createElement('div');
+  const answered = responses[q.id]!==undefined && responses[q.id]!=='';
+  card.className='q-card'+(answered?' answered':'');
+  card.id='card-'+q.id;
+  let h = `<div class="q-id">${q.id}${q.badge?` <span class="q-badge">${q.badge}</span>`:''}</div>`;
+  h += `<div class="q-text">${q.text}${q.required?'<span class="q-req">*</span>':''}</div>`;
+  switch(q.type){
+    case 'likert':   h+=buildLikert(q); break;
+    case 'select':   h+=buildSelect(q); break;
+    case 'text':     h+=buildTextInp(q); break;
+    case 'textarea': h+=buildTA(q); break;
+  }
+  card.innerHTML=h;
+  setTimeout(()=>bindEv(q,card),0);
+  return card;
+}
+
+function buildLikert(q){
+  const val=responses[q.id];
+  let h='<div class="lk-wrap">';
+  [1,2,3,4,5].forEach(n=>{
+    h+=`<div class="lk-opt">
+      <button class="lk-btn${val==n?' sel':''}" data-qid="${q.id}" data-val="${n}">${n}</button>
+      <span class="lk-lbl">${LIKERT_LABELS[n]}</span>
+    </div>`;
+  });
+  return h+'</div>';
+}
+
+function buildSelect(q){
+  const val=responses[q.id]||'';
+  let h=`<select class="f-sel" id="s-${q.id}" data-qid="${q.id}"><option value="">Selecione...</option>`;
+  (q.options||[]).forEach(o=>h+=`<option${val===o?' selected':''}>${o}</option>`);
+  return h+'</select>';
+}
+function buildTextInp(q){
+  return `<input type="text" class="f-text" id="t-${q.id}" data-qid="${q.id}" value="${responses[q.id]||''}" placeholder="${q.placeholder||''}">`;
+}
+function buildTA(q){
+  const val=responses[q.id]||'';
+  return `<textarea class="f-ta" id="ta-${q.id}" data-qid="${q.id}" maxlength="500" placeholder="${q.placeholder||'Sua resposta...'}">${val}</textarea>
+  <div class="char-ct" id="cc-${q.id}">${val.length}/500</div>`;
+}
+
+function bindEv(q,card){
+  if(q.type==='likert'){
+    card.querySelectorAll('.lk-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        responses[q.id]=parseInt(btn.dataset.val);
+        card.querySelectorAll('.lk-btn').forEach(b=>b.classList.remove('sel'));
+        btn.classList.add('sel');
+        card.classList.add('answered'); card.classList.remove('req-err');
+        autoSave();
+      });
+    });
+  }
+  if(q.type==='select'){
+    const el=card.querySelector('#s-'+q.id);
+    if(el) el.addEventListener('change',()=>{responses[q.id]=el.value;card.classList.toggle('answered',!!el.value);card.classList.remove('req-err');autoSave();});
+  }
+  if(q.type==='text'){
+    const el=card.querySelector('#t-'+q.id);
+    if(el) el.addEventListener('input',()=>{responses[q.id]=el.value;card.classList.toggle('answered',!!el.value.trim());autoSave();});
+  }
+  if(q.type==='textarea'){
+    const el=card.querySelector('#ta-'+q.id); const cc=card.querySelector('#cc-'+q.id);
+    if(el) el.addEventListener('input',()=>{responses[q.id]=el.value;if(cc)cc.textContent=el.value.length+'/500';card.classList.toggle('answered',!!el.value.trim());autoSave();});
+  }
+}
+
+function validate(){
+  const sec=survey.sections[secIdx]; let ok=true,first=null;
+  sec.questions.forEach(q=>{
+    if(!q.required)return;
+    const empty=responses[q.id]===undefined||responses[q.id]==='';
+    const card=document.getElementById('card-'+q.id);
+    if(empty){ok=false;card.classList.add('req-err');if(!first)first=card;}
+    else card.classList.remove('req-err');
+  });
+  if(!ok&&first){first.scrollIntoView({behavior:'smooth',block:'center'});showToast('⚠️ Preencha as perguntas obrigatórias (*)');}
+  return ok;
+}
+
+function nextSec(){
+  if(!validate())return;
+  if(secIdx<survey.sections.length-1){secIdx++;renderSection();}
+  else submitSurvey();
+}
+function prevSec(){if(secIdx>0){secIdx--;renderSection();}}
+
+/* ── Submit — apenas Supabase ── */
+async function submitSurvey(){
+  document.getElementById('view-survey').style.display='none';
+  document.getElementById('view-sending').style.display='flex';
+
+  // Montar payload
+  const now = new Date().toISOString();
+  const seg = {};
+  // Extrair segmentação das respostas de identificação
+  const sec0 = survey.sections[0];
+  if(sec0 && sec0.questions){
+    sec0.questions.forEach((q,i)=>{
+      if(q.type==='select'||q.type==='text'){
+        const keys=['seg_audience','seg_area','seg_shift','seg_tenure','seg_level'];
+        if(keys[i]) seg[keys[i]] = responses[q.id]||null;
+      }
+    });
+  }
+
+  const respondent = {
+    id: respondentId,
+    survey_id: survey.id,
+    survey_type: surveyType,
+    submitted_at: now,
+    is_complete: true,
+    collection_round: '2026-H1',
+    ...seg
+  };
+
+  const responseRows = Object.entries(responses).map(([qid,val])=>({
+    respondent_id: respondentId,
+    question_id: qid,
+    survey_type: surveyType,
+    value: String(val),
+    value_numeric: !isNaN(val) && val!=='' ? parseFloat(val) : null,
+    created_at: now
+  }));
+
+  let success = false;
+  try {
+    // 1. Inserir respondente (upsert — não falha se já existir)
+    console.log('[Odara] Inserindo respondente:', respondentId);
+    await window.sbInsert('respondents', respondent);
+    console.log('[Odara] Respondente OK');
+
+    // 2. Inserir respostas em batches de 50
+    console.log('[Odara] Inserindo', responseRows.length, 'respostas...');
+    for(let i=0;i<responseRows.length;i+=50){
+      const batch = responseRows.slice(i,i+50);
+      await window.sbInsert('responses', batch);
+      console.log('[Odara] Batch', Math.floor(i/50)+1, 'OK —', batch.length, 'respostas');
+    }
+    success = true;
+    console.log('[Odara] ✅ Todas as respostas salvas com sucesso!');
+  } catch(err) {
+    console.error('[Odara] ❌ Erro ao salvar:', err.message || err);
+  }
+
+  // Limpar sessão parcial
+  sessionStorage.removeItem('odara_partial_'+surveyType);
+
+  document.getElementById('view-sending').style.display='none';
+  document.getElementById('view-thanks').style.display='flex';
+
+  if(!success){
+    // Fallback silencioso: aviso no console, não bloqueia o usuário
+    console.warn('Respostas não foram salvas no Supabase. Verifique as credenciais em config.js');
+  }
+}
+
+/* Salvar parcialmente em sessionStorage (apagado quando fecha o browser) */
+function autoSave(){
+  sessionStorage.setItem('odara_partial_'+surveyType, JSON.stringify({responses,secIdx,respondentId}));
+}
+function savePartial(){autoSave();showToast('✅ Progresso salvo para esta sessão.');}
+
+function showToast(msg){
+  let t=document.getElementById('odara-toast');
+  if(!t){t=document.createElement('div');t.id='odara-toast';t.className='toast';document.body.appendChild(t);}
+  t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+window.nextSec=nextSec;window.prevSec=prevSec;window.savePartial=savePartial;
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odara — Pesquisa de Cultura da Qualidade</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;900&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;font-family:'Barlow',sans-serif;}
+
+/* Fundo mais claro — carvão escuro ao invés de preto puro */
+body{
+  background:#1C1A14;
+  color:#fff;
+  display:flex;flex-direction:column;
+}
+
+/* Background decorativo com mais luminosidade */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg::before{
+  content:'';position:absolute;top:-10%;right:-5%;
+  width:55%;height:125%;
+  background:linear-gradient(140deg,#FFB81D 0%,#FFA000 60%,#FF6B00 100%);
+  clip-path:polygon(24% 0%,100% 0%,100% 100%,2% 100%);
+  opacity:.09;
+}
+.bg::after{
+  content:'';position:absolute;bottom:-60px;left:-60px;
+  width:320px;height:320px;border-radius:50%;
+  border:1px solid rgba(255,184,29,.1);
+  box-shadow:
+    0 0 0 50px rgba(255,184,29,.04),
+    0 0 0 100px rgba(255,184,29,.025),
+    0 0 80px 0 rgba(255,184,29,.06);
+}
+
+.wrap{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;}
+
+/* HEADER */
+header{
+  flex-shrink:0;padding:13px 34px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,184,29,.14);
+  background:rgba(255,255,255,.03);
+  backdrop-filter:blur(4px);
+}
+.logo{font-size:19px;font-weight:900;letter-spacing:3px;color:#fff;text-transform:uppercase;}
+.logo span{color:#FFB81D;}
+.hcenter{
+  font-size:8.5px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;color:#8A8070;text-align:center;
+}
+.btn-painel{
+  font-family:'Barlow',sans-serif;font-size:9.5px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:#FFB81D;background:none;
+  border:1.5px solid rgba(255,184,29,.4);
+  padding:7px 15px;border-radius:2px;cursor:pointer;transition:all .2s;
+}
+.btn-painel:hover{background:rgba(255,184,29,.12);border-color:#FFB81D;}
+
+/* HERO */
+.hero{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:0;}
+
+/* LADO ESQUERDO */
+.left{padding:22px 34px;display:flex;flex-direction:column;justify-content:center;gap:11px;}
+
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(238,39,55,.18);border:1px solid rgba(238,39,55,.38);
+  color:#FF6B6B;font-size:8.5px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;padding:4px 10px;border-radius:2px;width:fit-content;
+}
+.badge.closed{background:rgba(120,120,100,.15);border-color:rgba(120,120,100,.3);color:#8A8070;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+.title-line1{font-size:clamp(19px,2.2vw,30px);font-weight:900;text-transform:uppercase;letter-spacing:-1px;color:#F0EBE0;}
+.title-accent{display:block;font-size:clamp(22px,2.6vw,36px);font-weight:900;color:#FFB81D;text-transform:uppercase;letter-spacing:-1px;}
+.title-sub{display:block;font-size:clamp(10px,1.1vw,14px);font-weight:300;color:rgba(240,235,224,.5);margin-top:2px;}
+
+/* Descrição com cor mais visível */
+.desc{font-size:11px;color:#A09888;line-height:1.65;max-width:400px;}
+
+/* PRAZOS — mais brilhante */
+.prazos{
+  background:rgba(255,184,29,.07);
+  border:1px solid rgba(255,184,29,.18);
+  border-left:3px solid #FFB81D;
+  border-radius:2px;padding:11px 15px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.prazos-lbl{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#FFB81D;margin-bottom:1px;}
+.prazo{display:flex;align-items:center;gap:9px;}
+.pdot{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;}
+.pdot.active{background:rgba(238,39,55,.22);}
+.pdot.next{background:rgba(255,184,29,.18);}
+.pdot.future{background:rgba(120,120,100,.2);}
+/* texto dos prazos mais legível */
+.prazo-name{font-size:10.5px;font-weight:600;color:#E8E0D0;line-height:1.2;}
+.prazo-date{font-size:9px;color:#8A8070;}
+.prazo.active .prazo-name{color:#FF8080;}
+
+/* LADO DIREITO */
+.right{
+  border-left:1px solid rgba(255,184,29,.1);
+  background:rgba(255,248,230,.03);
+  padding:22px 34px;display:flex;flex-direction:column;justify-content:center;
+}
+.pick-lbl{font-size:8px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7A7060;margin-bottom:13px;}
+
+.aud-grid{display:flex;flex-direction:column;gap:8px;}
+.aud-card{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 13px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:3px;cursor:pointer;text-decoration:none;color:inherit;
+  transition:all .22s;position:relative;overflow:hidden;
+}
+.aud-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#FFB81D;transform:scaleY(0);transition:transform .22s;border-radius:0 2px 2px 0;}
+.aud-card:hover{background:rgba(255,184,29,.08);border-color:rgba(255,184,29,.3);transform:translateX(3px);}
+.aud-card:hover::before{transform:scaleY(1);}
+.aud-card.disabled{opacity:.3;cursor:not-allowed;pointer-events:none;}
+.aud-icon{width:32px;height:32px;background:rgba(255,184,29,.12);border:1px solid rgba(255,184,29,.22);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+/* nome das categorias mais brilhante */
+.aud-name{font-size:12.5px;font-weight:700;color:#F0EBE0;margin-bottom:1px;}
+.aud-meta{font-size:10px;color:#7A7060;}
+.aud-time{font-size:8px;font-weight:700;letter-spacing:1px;color:#FFB81D;background:rgba(255,184,29,.12);padding:2px 7px;border-radius:2px;white-space:nowrap;}
+.aud-arrow{font-size:12px;color:#FFB81D;opacity:0;transform:translateX(-4px);transition:all .2s;}
+.aud-card:hover .aud-arrow{opacity:1;transform:translateX(0);}
+
+.anon{margin-top:10px;font-size:9px;color:#6A6050;display:flex;align-items:center;gap:5px;}
+.anon::before{content:'🔒';font-size:10px;}
+
+/* FOOTER */
+footer{
+  flex-shrink:0;padding:8px 34px;
+  border-top:1px solid rgba(255,184,29,.09);
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,0,0,.15);
+}
+.fcopy{font-size:8.5px;color:#4A4438;}
+.footer-right{display:flex;align-items:center;gap:10px;}
+.fbadges{display:flex;gap:5px;}
+.fbadge{background:rgba(255,184,29,.1);border:1px solid rgba(255,184,29,.2);color:#FFB81D;padding:2px 7px;border-radius:2px;font-size:7.5px;font-weight:700;letter-spacing:1px;}
+
+/* FAROL SUPABASE */
+.sb-status{display:flex;align-items:center;gap:5px;font-size:8.5px;font-weight:600;letter-spacing:.5px;}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-dot.connected{background:#27AE60;box-shadow:0 0 6px rgba(39,174,96,.6);animation:glow 2s infinite;}
+.sb-dot.disconnected{background:#E74C3C;box-shadow:0 0 6px rgba(231,76,60,.4);}
+.sb-dot.checking{background:#F39C12;animation:pulse 1s infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 6px rgba(39,174,96,.6);}50%{box-shadow:0 0 12px rgba(39,174,96,.9);}}
+.sb-label{color:#7A7060;}
+.sb-label.connected{color:#4AC880;}
+.sb-label.disconnected{color:#E07070;}
+
+/* MODAL SENHA */
+.modal-ov{position:fixed;inset:0;background:rgba(12,10,8,.82);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-box{background:#242018;border:2px solid rgba(255,184,29,.4);border-radius:5px;padding:30px 26px;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.m-logo{font-size:14px;font-weight:900;letter-spacing:3px;color:#F0EBE0;text-transform:uppercase;margin-bottom:2px;}
+.m-logo span{color:#FFB81D;}
+.m-sub{font-size:9.5px;color:#7A7060;margin-bottom:22px;}
+.m-lbl{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#7A7060;display:block;text-align:left;margin-bottom:5px;}
+.m-input{width:100%;padding:11px 13px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:2px;font-family:'Barlow',sans-serif;font-size:15px;color:#F0EBE0;letter-spacing:4px;transition:border-color .2s;}
+.m-input:focus{outline:none;border-color:#FFB81D;}
+.m-err{font-size:9.5px;color:#FF8080;text-align:left;margin-top:5px;min-height:13px;display:block;}
+.m-btns{display:flex;gap:7px;margin-top:18px;}
+.btn-mcancel{flex:1;padding:10px;background:none;border:1.5px solid rgba(255,255,255,.1);color:#7A7060;font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.btn-mcancel:hover{border-color:rgba(255,255,255,.24);color:#F0EBE0;}
+.btn-mok{flex:2;padding:10px;background:#FFB81D;border:none;color:#0C0C0C;font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;border-radius:2px;cursor:pointer;transition:all .2s;}
+.btn-mok:hover{background:#FFC94D;}
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;}
+  .right{border-left:none;border-top:1px solid rgba(255,184,29,.1);}
+}
+@media(max-width:640px){
+  html,body{overflow:auto;overflow-x:hidden;}
+  .wrap{height:auto;min-height:100vh;}
+  .bg::before{width:100%;clip-path:none;opacity:.06;}
+  header{padding:11px 16px;flex-wrap:wrap;gap:8px;}
+  .hcenter{display:none;}
+  .left{padding:20px 16px;gap:14px;}
+  .title-line1{font-size:22px;}
+  .title-accent{font-size:28px;}
+  .desc{font-size:12px;max-width:100%;}
+  .prazos{padding:10px 12px;}
+  .right{padding:20px 16px;}
+  .aud-grid{gap:7px;}
+  .aud-card{padding:10px 12px;}
+  .aud-time{font-size:7.5px;padding:2px 6px;}
+  footer{padding:10px 16px;flex-wrap:wrap;gap:6px;justify-content:center;text-align:center;}
+  .footer-right{flex-wrap:wrap;gap:6px;justify-content:center;}
+  .modal-box{padding:24px 18px;max-width:calc(100vw - 40px);}
+}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+
+  <header>
+    <div class="logo">ODARA<span>.</span></div>
+    <div class="hcenter">Painel Cultural · Segurança do Produto & Qualidade</div>
+    <button class="btn-painel" onclick="openPwdModal()">📊 Painel Analítico</button>
+  </header>
+
+  <main class="hero">
+    <!-- ESQUERDA -->
+    <div class="left">
+      <div class="badge" id="status-badge">Coleta ativa · Rodada 2026-H1</div>
+
+      <div>
+        <div class="title-line1">Pesquisa de</div>
+        <span class="title-accent">Cultura</span>
+        <span class="title-sub">Qualidade & Segurança de Alimentos</span>
+      </div>
+
+      <p class="desc">Esta pesquisa é anônima e faz parte do sistema de gestão de cultura da Odara, alinhado à certificação FSSC 22000 v6. Suas respostas constroem um ambiente mais seguro para toda a cadeia.</p>
+
+      <div class="prazos">
+        <div class="prazos-lbl">📅 Calendário da pesquisa</div>
+        <div class="prazo active">
+          <div class="pdot active">🔴</div>
+          <div><div class="prazo-name">Coleta de respostas</div><div class="prazo-date">Até 24 de abril de 2026</div></div>
+        </div>
+        <div class="prazo next">
+          <div class="pdot next">🟡</div>
+          <div><div class="prazo-name">Divulgação dos resultados</div><div class="prazo-date">Até 15 de maio de 2026</div></div>
+        </div>
+        <div class="prazo future">
+          <div class="pdot future">⚪</div>
+          <div><div class="prazo-name">Execução do plano de ação</div><div class="prazo-date">Até setembro de 2026</div></div>
+        </div>
+        <div class="prazo future">
+          <div class="pdot future">⚪</div>
+          <div><div class="prazo-name">Nova pesquisa de clima</div><div class="prazo-date">Outubro de 2026</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIREITA -->
+    <div class="right">
+      <div class="pick-lbl" id="pick-lbl">Selecione seu perfil para iniciar</div>
+      <div class="aud-grid">
+        <a class="aud-card" id="card-internos" href="survey.html?type=internos">
+          <div class="aud-icon">👷</div>
+          <div style="flex:1;"><div class="aud-name">Colaborador</div><div class="aud-meta">Operacional · Administrativo · Produção</div></div>
+          <div class="aud-time">~8 min</div><div class="aud-arrow">→</div>
+        </a>
+        <a class="aud-card" id="card-liderancas" href="survey.html?type=liderancas">
+          <div class="aud-icon">🏆</div>
+          <div style="flex:1;"><div class="aud-name">Liderança</div><div class="aud-meta">Supervisor · Coordenador · Gerente · Diretor</div></div>
+          <div class="aud-time">~10 min</div><div class="aud-arrow">→</div>
+        </a>
+        <a class="aud-card" id="card-fornecedores" href="survey.html?type=fornecedores">
+          <div class="aud-icon">🤝</div>
+          <div style="flex:1;"><div class="aud-name">Fornecedor</div><div class="aud-meta">Parceiro crítico de cadeia produtiva</div></div>
+          <div class="aud-time">~6 min</div><div class="aud-arrow">→</div>
+        </a>
+        <a class="aud-card" id="card-distribuidores" href="survey.html?type=distribuidores">
+          <div class="aud-icon">🏪</div>
+          <div style="flex:1;"><div class="aud-name">Distribuidor / Cliente</div><div class="aud-meta">Parceiro comercial e canais de venda</div></div>
+          <div class="aud-time">~5 min</div><div class="aud-arrow">→</div>
+        </a>
+      </div>
+      <div class="anon" id="anon-note">Anonimato garantido · Sem identificação individual · Apenas para melhoria interna</div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="fcopy">© 2026 Odara Alfajores</div>
+    <div class="footer-right">
+      <!-- FAROL SUPABASE -->
+      <div class="sb-status" id="sb-status" title="Status da conexão com o banco de dados">
+        <div class="sb-dot checking" id="sb-dot"></div>
+        <span class="sb-label" id="sb-label">Verificando banco…</span>
+      </div>
+      <div class="fbadges">
+        <span class="fbadge">FSSC 22000 v6</span>
+        <span class="fbadge">GFSI</span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- MODAL SENHA -->
+<div class="modal-ov" id="pwd-modal" style="display:none;" onclick="if(event.target===this)closePwdModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="m-logo">ODARA<span>.</span></div>
+    <div class="m-sub">Acesso restrito — equipe de gestão</div>
+    <label class="m-lbl" for="pwd-in">Senha de acesso</label>
+    <input class="m-input" id="pwd-in" type="password" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+    <span class="m-err" id="pwd-err"></span>
+    <div class="m-btns">
+      <button class="btn-mcancel" onclick="closePwdModal()">Cancelar</button>
+      <button class="btn-mok" onclick="checkPwd()">Acessar →</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js?v=20260409b"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // ── Checar prazo ──
+  if (window.isDeadlinePassed && window.isDeadlinePassed()) {
+    document.getElementById('status-badge').textContent = 'Coleta encerrada';
+    document.getElementById('status-badge').classList.add('closed');
+    document.getElementById('pick-lbl').textContent = 'Coleta encerrada';
+    document.getElementById('anon-note').textContent =
+      'O prazo de resposta encerrou. Os resultados serão divulgados em breve.';
+    document.querySelectorAll('.aud-card').forEach(c => {
+      c.classList.add('disabled');
+      c.removeAttribute('href');
+      c.onclick = e => { e.preventDefault(); alert('⏰ O prazo de coleta encerrou.\nOs resultados serão divulgados em breve.'); };
+    });
+  }
+
+  // ── Farol Supabase ──
+  checkSupabaseStatus();
+});
+
+async function checkSupabaseStatus() {
+  const dot   = document.getElementById('sb-dot');
+  const label = document.getElementById('sb-label');
+
+  if (!window.supabaseConfigured || !window.supabaseConfigured()) {
+    dot.className   = 'sb-dot disconnected';
+    label.textContent = 'Modo offline (local)';
+    label.className  = 'sb-label';
+    return;
+  }
+
+  try {
+    const r = await fetch(window.SUPABASE_URL + '/rest/v1/surveys?select=id&limit=1', {
+      headers: {
+        'apikey': window.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + window.SUPABASE_ANON_KEY
+      }
+    });
+    if (r.ok) {
+      dot.className   = 'sb-dot connected';
+      label.textContent = 'Banco conectado';
+      label.className  = 'sb-label connected';
+    } else {
+      dot.className   = 'sb-dot disconnected';
+      label.textContent = 'Banco sem conexão (' + r.status + ')';
+      label.className  = 'sb-label disconnected';
+    }
+  } catch (e) {
+    dot.className   = 'sb-dot disconnected';
+    label.textContent = 'Banco sem conexão';
+    label.className  = 'sb-label';
+  }
+}
+
+function openPwdModal() {
+  document.getElementById('pwd-modal').style.display = 'flex';
+  document.getElementById('pwd-in').value = '';
+  document.getElementById('pwd-err').textContent = '';
+  setTimeout(() => document.getElementById('pwd-in').focus(), 80);
+}
+function closePwdModal() { document.getElementById('pwd-modal').style.display = 'none'; }
+
+function checkPwd() {
+  const v  = document.getElementById('pwd-in').value;
+  const pw = window.ODARA_PASSWORD || 'odara';
+  if (v === pw) {
+    sessionStorage.setItem('odara_auth', '1');
+    window.location.href = 'dashboard.html';
+  } else {
+    document.getElementById('pwd-err').textContent = 'Senha incorreta. Tente novamente.';
+    document.getElementById('pwd-in').value = '';
+    document.getElementById('pwd-in').focus();
+  }
+}
+</script>
+</body>
+</html>
